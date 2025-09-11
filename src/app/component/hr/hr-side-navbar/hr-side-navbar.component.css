@@ -1,0 +1,106 @@
+/* Base sidebar styles */
+.sidebar {
+  position: relative;
+  z-index: 45;
+}
+
+/* Desktop styles */
+.sidebar.desktop {
+  width: 14rem;
+  min-width: 14rem;
+  position: static;
+}
+
+.sidebar.desktop.minimized {
+  width: 4rem;
+  min-width: 4rem;
+}
+
+/* Mobile styles */
+@media (max-width: 767px) {
+  .sidebar.mobile-closed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    transform: translateX(-100%);
+    z-index: 45;
+  }
+  
+  .sidebar.mobile-open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    transform: translateX(0);
+    z-index: 45;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
+/* Hamburger menu animation */
+.hamburger-icon {
+  transition: all 0.3s ease-in-out;
+}
+
+.menu-open .hamburger-icon .line-1 {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-open .hamburger-icon .line-2 {
+  opacity: 0;
+}
+
+.menu-open .hamburger-icon .line-3 {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Backdrop animation */
+.backdrop {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Smooth transitions for all interactive elements */
+.sidebar a {
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar a:hover {
+  transform: translateX(2px);
+}
+
+/* Logo responsive adjustments */
+@media (max-width: 767px) {
+  .sidebar img {
+    width: 6rem;
+  }
+}
+
+/* Hide text when minimized on desktop */
+.sidebar.minimized span {
+  display: none;
+}
+
+.sidebar.minimized .text-center {
+  display: none;
+}
+
+.sidebar.minimized ul {
+  space-y: 2;
+}
+
+.sidebar.minimized li a {
+  justify-content: center;
+  padding: 0.75rem;
+}

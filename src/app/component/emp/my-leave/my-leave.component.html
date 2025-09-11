@@ -1,0 +1,232 @@
+<div class="flex h-screen bg-white">
+
+  <!-- Sidebar -->
+<app-emp-side-navbar></app-emp-side-navbar>
+
+<!-- Main Content -->
+<div class="flex-1 flex flex-col transition-all duration-300 ease-in-out overflow-hidden"
+  [ngClass]="{
+   'w-20': isSidebarMinimized,
+   'md:w-1/6': !isSidebarMinimized
+  }">
+<header class="bg-white backdrop-blur-sm bg-opacity-90 border-b border-slate-200/60 shadow-sm px-6 py-4 sticky top-0 z-10">
+  <div class="max-w-20xl mx-auto flex justify-between items-center">
+    <!-- Left side: Greeting (Toggle button removed) -->
+    <div>
+      <h1 class="text-xl font-semibold text-slate-800">
+        Welcome Back, <span class="text-indigo-600 font-bold">{{ user.name ? user.name : 'Employee' }}</span>
+      </h1>
+  
+    </div>
+
+    <!-- Right side: User Profile -->
+    <div class="flex items-center">
+      <div class="relative group">
+        <button class="flex items-center space-x-3 focus:outline-none">
+          <div class="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 ring-2 ring-white flex items-center justify-center text-white font-bold shadow-sm">
+            {{ user.name ? user.name.charAt(0) : 'E' }}
+          </div>
+          <div class="hidden md:block text-left">
+            <p class="text-sm font-medium text-slate-700 leading-tight">{{ user.name ? user.name : 'Employee' }}</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 hidden md:block" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-20 border border-slate-200 hidden group-hover:block">
+          <a (click)="logout()" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Main Content Body -->
+<div class="flex-1 p-6 bg-gray-50 overflow-auto">
+
+  <!-- Tiles -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <!-- Annual/Sick Leaves Tile -->
+    <!-- <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 transition duration-300 hover:shadow-md cursor-pointer">
+      <div class="h-2 bg-indigo-600"></div>
+      <div class="p-6">
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="bg-indigo-100 p-2 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <h3 class="font-bold text-xl text-gray-800">Annual/Sick Leaves - {{ remainingLeaves }}</h3>
+        </div>
+        <p class="text-gray-600 mb-4">View your annual and sick leave balance.</p>
+        <div class="mt-4">
+          <button class="inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 text-sm">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- Apply Leave Tile -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 transition duration-300 hover:shadow-md cursor-pointer">
+      <div class="h-2 bg-emerald-600"></div>
+      <div class="p-6">
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="bg-emerald-100 p-2 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <h3 class="font-bold text-xl text-gray-800">Apply Leave</h3>
+        </div>
+        <p class="text-gray-600 mb-4">Apply for a new leave request with ease.</p>
+        <div class="mt-4">
+          <button (click)="openLeaveModal()" class="inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200 text-sm">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- General Holidays Tile -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 transition duration-300 hover:shadow-md cursor-pointer">
+      <div class="h-2 bg-blue-600"></div>
+      <div class="p-6">
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="bg-blue-100 p-2 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4 2a2 2 0 012-2h8a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V2z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <h3 class="font-semibold text-lg text-gray-800">General Holidays</h3>
+        </div>
+        <p class="text-gray-600 mb-4">View the list of upcoming holidays and Company SOP</p>
+        <div class="mt-4">
+          <a href="/my-leaves" class="inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 text-sm">
+            View
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave Request Modal -->
+<div *ngIf="isLeaveModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+    <h3 class="text-xl font-semibold mb-4">Apply for Leave</h3>
+
+    <!-- Show Remaining Leaves -->
+    <div class="mb-2">
+      <p class="text-sm text-green-700 font-medium">Remaining Leaves: {{ remainingLeaves }}</p>
+    </div>
+
+    <form (ngSubmit)="submitLeave()">
+      <!-- Leave Type -->
+      <div class="mb-4">
+        <label for="leaveType" class="block text-sm font-medium text-gray-700">Leave Type</label>
+        <select id="leaveType" [(ngModel)]="leaveRequest.leaveType" name="leaveType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="">Select Leave Type</option>
+          <option value="Annual">Annual Leave</option>
+          <option value="Sick">Sick Leave</option>
+        </select>
+      </div>
+
+      <!-- From Date -->
+      <div class="mb-4">
+        <label for="fromDate" class="block text-sm font-medium text-gray-700">From Date</label>
+        <input
+          type="date"
+          id="fromDate"
+          [(ngModel)]="leaveRequest.fromDate"
+          name="fromDate"
+          [min]="today"  
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+        >
+      </div>
+
+      <!-- To Date -->
+      <div class="mb-4">
+        <label for="toDate" class="block text-sm font-medium text-gray-700">To Date</label>
+        <input
+          type="date"
+          id="toDate"
+          [(ngModel)]="leaveRequest.toDate"
+          name="toDate"
+          [min]="leaveRequest.fromDate || today"  
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+        >
+      </div>
+
+      <!-- Total Days Info -->
+      <div class="mb-4" *ngIf="dateCount > 0">
+        <p class="text-sm text-gray-700">You are applying for: <strong>{{ dateCount }}</strong> day(s)</p>
+        <p *ngIf="dateCount > remainingLeaves" class="text-red-600 text-sm font-semibold">⚠️ You only have {{ remainingLeaves }} leave(s) left</p>
+      </div>
+
+      <!-- Reason -->
+      <div class="mb-4">
+        <label for="reason" class="block text-sm font-medium text-gray-700">Reason</label>
+        <textarea id="reason" [(ngModel)]="leaveRequest.reason" name="reason" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-between mt-4">
+        <button type="button" (click)="closeLeaveModal()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400">Cancel</button>
+        <button type="submit" [disabled]="dateCount > remainingLeaves" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+  <!-- Leave Requests Table -->
+  <div class="grid grid-cols-1 md:grid-cols-1 gap-3 mb-3">
+  <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 transition duration-300 hover:shadow-md cursor-pointer">
+  <div class="bg-white p-4 rounded-lg shadow-md">
+    <h3 class="text-lg font-bold mb-4">My Leave Requests</h3>
+    <table class=" text-center min-w-full table-auto border-collapse">
+      <thead>
+        <tr class="bg-blue-100 text-blue-700">
+          <th class="border p-2">Leave Type</th>
+          <th class="border p-2">From</th>
+          <th class="border p-2">To</th>
+          <th class="border p-2">Reason</th>
+          <th class="border p-2">Status</th>
+          <th class="border p-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let leave of leaveRequests">
+          <td>{{ leave.leaveType }}</td>
+          <td>{{ leave.formattedFromDate }}</td>
+          <td>{{ leave.formattedToDate }}</td>
+          <td>{{ leave.reason }}</td>
+          <td class="font-semibold" [ngClass]="{
+            'text-green-600': leave.status === 'Approved',
+            'text-red-600': leave.status === 'Rejected',
+            'text-yellow-600': leave.status === 'Pending'
+          }">
+            {{ leave.status }}
+          </td>
+          <td>
+            <button
+              *ngIf="leave.status === 'Pending'"
+              (click)="cancelLeaveRequest(leave.id)"
+              class="cancel-btn text-red-500">
+              Cancel
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="leaveRequests.length === 0">
+          <td colspan="6" class="text-center text-gray-500 p-4">No leave requests found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

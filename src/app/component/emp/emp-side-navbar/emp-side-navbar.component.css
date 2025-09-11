@@ -1,0 +1,47 @@
+/* emp-side-navbar.component.css */
+
+/* Custom transitions for smooth animations */
+.sidebar-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure tooltips appear above other elements */
+.group:hover .group-hover\:opacity-100 {
+  z-index: 1000;
+}
+
+/* Custom scrollbar for sidebar if content overflows */
+:host {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+:host::-webkit-scrollbar {
+  width: 4px;
+}
+
+:host::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+:host::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+:host::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Prevent text selection on toggle button */
+button {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Smooth transitions for width changes */
+:host {
+  transition: width 0.3s ease-in-out;
+}

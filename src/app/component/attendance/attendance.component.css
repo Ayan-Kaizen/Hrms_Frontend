@@ -1,0 +1,22 @@
+/* Attendance Page Styles */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  text-align: left;
+}
+
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+

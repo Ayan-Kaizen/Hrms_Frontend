@@ -1,0 +1,328 @@
+<div class="flex h-screen bg-white-100">
+   <!-- Sidebar -->
+<app-emp-side-navbar></app-emp-side-navbar>
+
+  <div class="flex-1 p-6">
+    <header class="flex justify-between items-center mb-6">
+      <div class="text-2xl font-semibold text-blue-600">Employee Profile</div>
+    </header>
+
+    <div *ngIf="formSubmitted" class="text-green-600 text-xl font-semibold mt-10 text-center space-y-4">
+      <p>✅ Profile submitted successfully!</p>
+      <button mat-raised-button color="accent" (click)="resetForm()">Edit Profile</button>
+      <button mat-stroked-button color="primary" routerLink="/">Go Back</button>
+    </div>
+
+    <div *ngIf="!formSubmitted && !userDetails"
+      class="max-w-10xl mx-auto bg-white shadow-xl rounded-2xl p-6 border border-gray-200 transition-transform hover:-translate-y-1 hover:shadow-2xl">
+
+      <h2 class="text-xl font-bold text-blue-700 mb-6 text-center">Fill Your Profile</h2>
+
+      <div class="mb-4">
+        <label class="font-medium text-blue-600 block mb-2">Upload Profile Image:</label>
+        <input type="file" (change)="onFileChange($event)" accept="image/*" class="mb-2">
+        <div *ngIf="fileName" class="text-sm text-gray-800 mb-2">
+          Selected file: <strong>{{ fileName }}</strong>
+        </div>
+        <div *ngIf="previewUrl" class="mt-2">
+          <img [src]="previewUrl" alt="Uploaded Image" class="w-24 h-24 rounded-full object-cover border shadow">
+        </div>
+      </div>
+
+      <form class="space-y-4" (ngSubmit)="onSubmit()" #profileForm="ngForm">
+
+        <div class="border rounded-xl">
+          <button type="button" (click)="activeFormSection = toggleSection('personal')"
+            class="w-full px-4 py-3 flex justify-between items-center bg-blue-50 rounded-t-xl hover:bg-blue-100">
+            <span class="font-semibold text-blue-800">👤 Personal Information</span>
+            <svg [ngClass]="{ 'rotate-180': activeFormSection === 'personal' }"
+              class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div *ngIf="activeFormSection === 'personal'" class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <mat-form-field appearance="fill">
+              <mat-label>Employee ID</mat-label>
+              <input matInput [(ngModel)]="employeeId" name="employeeId" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Name</mat-label>
+              <input matInput [(ngModel)]="name" name="name" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Job Role</mat-label>
+              <input matInput [(ngModel)]="jobRole" name="jobRole">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Department</mat-label>
+              <mat-select [(ngModel)]="department" name="department">
+                <mat-option value="HR">HR</mat-option>
+                <mat-option value="Developer">Developer</mat-option>
+                <mat-option value="Manager">Manager</mat-option>
+                <mat-option value="Designer">Designer</mat-option>
+                <mat-option value="Content">Content</mat-option>
+                <mat-option value="Motion Design">Motion Design</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Aadhar Card Number</mat-label>
+              <input matInput [(ngModel)]="aadharNumber" name="aadhar_number" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Pan Card Number</mat-label>
+              <input matInput [(ngModel)]="panNumber" name="pan_number" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Blood Group</mat-label>
+              <mat-select [(ngModel)]="bloodGroup" name="bloodGroup">
+                <mat-option *ngFor="let bg of ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']" [value]="bg">{{ bg
+                  }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Date of Birth</mat-label>
+              <input matInput [matDatepicker]="dobPicker" [(ngModel)]="dob" name="dob">
+              <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dobPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Date of Joining</mat-label>
+              <input matInput [matDatepicker]="dojPicker" [(ngModel)]="doj" name="doj">
+              <mat-datepicker-toggle matSuffix [for]="dojPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dojPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="md:col-span-2">
+              <mat-label>Permanent Address</mat-label>
+              <textarea matInput rows="2" [(ngModel)]="permanentAddress" name="permanentAddress"></textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="md:col-span-2">
+              <mat-label>Current Address</mat-label>
+              <textarea matInput rows="2" [(ngModel)]="currentAddress" name="currentAddress"></textarea>
+            </mat-form-field>
+
+          </div>
+        </div>
+
+        <div class="border rounded-xl">
+          <button type="button" (click)="activeFormSection = toggleSection('contact')"
+            class="w-full px-4 py-3 flex justify-between items-center bg-blue-50 hover:bg-blue-100">
+            <span class="font-semibold text-blue-800">📞 Contact Details</span>
+            <svg [ngClass]="{ 'rotate-180': activeFormSection === 'contact' }"
+              class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div *ngIf="activeFormSection === 'contact'" class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <mat-form-field appearance="fill">
+              <mat-label>Email ID</mat-label>
+              <input matInput type="email" [(ngModel)]="email" name="email" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Contact No</mat-label>
+              <input matInput type="tel" [(ngModel)]="contactNo" name="contactNo" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Alternate Contact</mat-label>
+              <input matInput type="tel" [(ngModel)]="alternateContact" name="alternateContact">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Emergency Contact</mat-label>
+              <input matInput type="tel" [(ngModel)]="emergencyContact" name="emergencyContact">
+            </mat-form-field>
+
+          </div>
+        </div>
+
+        <div class="border rounded-xl">
+          <button type="button" (click)="activeFormSection = toggleSection('documents')"
+            class="w-full px-4 py-3 flex justify-between items-center bg-blue-50 hover:bg-blue-100">
+            <span class="font-semibold text-blue-800">🗂️ Documents</span>
+            <svg [ngClass]="{ 'rotate-180': activeFormSection === 'documents' }"
+              class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div *ngIf="activeFormSection === 'documents'" class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div>
+              <label class="block mb-1 font-medium">Upload Aadhar Card:</label>
+              <input type="file" (change)="onAadharUpload($event)">
+            </div>
+
+            <div>
+              <label class="block mb-1 font-medium">Upload PAN Card:</label>
+              <input type="file" (change)="onPanUpload($event)">
+            </div>
+
+            <div>
+              <label class="block mb-1 font-medium">Upload Salary Slip:</label>
+              <input type="file" (change)="onSalaryUpload($event)">
+            </div>
+
+            <div>
+              <label class="block mb-1 font-medium">Upload Education Certificates:</label>
+              <input type="file" multiple (change)="onEducationUpload($event)">
+            </div>
+            
+            <div>
+              <label class="block mb-1 font-medium">Upload Experience Letter:</label>
+              <input type="file" multiple (change)="onExperienceUpload($event)">
+            </div>
+
+          </div>
+        </div>
+
+        <div class="text-center mt-6">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!profileForm.form.valid">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+
+
+    <div *ngIf="userDetails && !formSubmitted" class="mt-10 px-4">
+      <div class="max-w-10xl mx-auto bg-white shadow-xl rounded-3xl p-6 border border-gray-200">
+
+        <div class="flex flex-col items-center text-center mb-10">
+          <img [src]="'http://localhost:3000/uploads/' + userDetails.profileImage" alt="Profile Image"
+            class="w-32 h-32 rounded-full object-cover border-4 border-blue-400 shadow-md hover:scale-105 transition-transform" />
+          <h2 class="text-2xl font-semibold text-blue-800 mt-4">{{ userDetails.name }}</h2>
+          <p class="text-sm text-gray-600">{{ userDetails.jobRole }} • {{ userDetails.department }}</p>
+        </div>
+
+        <div class="space-y-4">
+
+          <div class="border rounded-2xl shadow-sm">
+            <button (click)="activeSection = activeSection === 'personal' ? '' : 'personal'"
+              class="w-full flex justify-between items-center px-6 py-4 bg-blue-50 hover:bg-blue-100 text-left rounded-t-2xl">
+              <span class="font-semibold text-blue-800">👤 Personal Information</span>
+              <svg [ngClass]="{ 'rotate-180': activeSection === 'personal' }"
+                class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div *ngIf="activeSection === 'personal'"
+              class="px-6 py-4 text-gray-700 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div><strong>Employee ID:</strong> {{ userDetails.employeeId }}</div>
+              <div><strong>Job Role:</strong> {{ userDetails.jobRole }}</div>
+              <div><strong>Department:</strong> {{ userDetails.department }}</div>
+              <div><strong>Date of Birth:</strong> {{ userDetails.dob | date:'yyyy-MM-dd' }}</div>
+              <div><strong>Date of Joining:</strong> {{ userDetails.doj | date:'yyyy-MM-dd' }}</div>
+              <div><strong>Blood Group:</strong> {{ userDetails.bloodGroup }}</div>
+              <div><strong>Aadhar Number:</strong>{{userDetails.aadharNumber}}</div>
+             <div><strong>Pan Number:</strong>{{userDetails.panNumber}}</div>
+              <div class="md:col-span-2"><strong>Permanent Address:</strong> {{ userDetails.permanentAddress }}</div>
+              <div class="md:col-span-2"><strong>Current Address:</strong> {{ userDetails.currentAddress }}</div>
+            </div>
+          </div>
+
+          <div class="border rounded-2xl shadow-sm">
+            <button (click)="activeSection = activeSection === 'contact' ? '' : 'contact'"
+              class="w-full flex justify-between items-center px-6 py-4 bg-blue-50 hover:bg-blue-100 text-left rounded-t-2xl">
+              <span class="font-semibold text-blue-800">📞 Contact Details</span>
+              <svg [ngClass]="{ 'rotate-180': activeSection === 'contact' }"
+                class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div *ngIf="activeSection === 'contact'"
+              class="px-6 py-4 text-gray-700 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div><strong>Email:</strong> {{ userDetails.email }}</div>
+              <div><strong>Contact No:</strong> {{ userDetails.contactNo }}</div>
+              <div><strong>Alternate Contact:</strong> {{ userDetails.alternateContact }}</div>
+              <div><strong>Emergency Contact:</strong> {{ userDetails.emergencyContact }}</div>
+            </div>
+          </div>
+
+          <div class="border rounded-2xl shadow-sm">
+            <button (click)="activeSection = activeSection === 'documents' ? '' : 'documents'"
+              class="w-full flex justify-between items-center px-6 py-4 bg-blue-50 hover:bg-blue-100 text-left rounded-t-2xl">
+              <span class="font-semibold text-blue-800">🗂️ Documents</span>
+              <svg [ngClass]="{ 'rotate-180': activeSection === 'documents' }"
+                class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div *ngIf="activeSection === 'documents'" class="px-6 py-4 text-gray-700">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4" *ngIf="userDetails.documents?.length">
+                <div *ngFor="let doc of userDetails.documents"
+                  class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:shadow-md transition">
+                  <p class="font-medium">{{ doc.documentType }}</p>
+                  <a [href]="'http://localhost:3000/uploads/' + doc.documentPath" target="_blank"
+                    class="text-blue-600 hover:underline text-sm mt-1 inline-block">View</a>
+                </div>
+              </div>
+              <p *ngIf="!userDetails.documents?.length" class="text-sm text-gray-500">No documents uploaded.</p>
+
+              <div class="mt-6 text-center">
+                <button mat-raised-button color="accent" (click)="toggleDocumentUpdateForm()">
+                  Update Documents
+                </button>
+              </div>
+
+              <div *ngIf="showDocumentUpdateForm"
+                class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center p-4 z-50">
+                <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg relative">
+                  <h3 class="text-lg font-bold mb-4 text-blue-700">Update Your Documents</h3>
+                  <form class="space-y-4" (ngSubmit)="onDocumentUpdateSubmit()">
+                    <div>
+                      <label class="block mb-1 font-medium">Update Aadhar Card:</label>
+                      <input type="file" (change)="onAadharUpdate($event)">
+                    </div>
+
+                    <div>
+                      <label class="block mb-1 font-medium">Update PAN Card:</label>
+                      <input type="file" (change)="onPanUpdate($event)">
+                    </div>
+
+                    <div>
+                      <label class="block mb-1 font-medium">Update Salary Slip:</label>
+                      <input type="file" multiple (change)="onSalaryUpdate($event)">
+                    </div>
+
+                    <div>
+                      <label class="block mb-1 font-medium">Update Education Certificates:</label>
+                      <input type="file" multiple (change)="onEducationUpdate($event)">
+                    </div>
+
+                    <div>
+                      <label class="block mb-1 font-medium">Update Experience Letter:</label>
+                      <input type="file" multiple (change)="onExperienceUpdate($event)">
+                    </div>
+
+                    <div class="flex justify-end space-x-2 mt-6">
+                      <button type="button" mat-stroked-button color="warn" (click)="toggleDocumentUpdateForm()">
+                        Cancel
+                      </button>
+                      <button type="submit" mat-raised-button color="primary">
+                        Submit Updates
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

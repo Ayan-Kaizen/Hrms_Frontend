@@ -1,0 +1,65 @@
+<!-- Modern HRMS Employee Details Page -->
+<div class="flex min-h-screen bg-gray-50">
+  <!-- Sidebar -->
+  <app-hr-side-navbar class="w-64"></app-hr-side-navbar> 
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col transition-all duration-300 ease-in-out overflow-hidden">
+    <header class="bg-white backdrop-blur-sm bg-opacity-90 border-b border-slate-200/60 shadow-sm px-6 py-4 sticky top-0 z-10">
+      <div class="max-w-20xl mx-auto flex justify-between items-center">
+        <!-- Left side: Header Title -->
+        <div>
+          <h1 class="text-xl font-bold text-indigo-800">
+            Employee Credentials
+          </h1>
+          <div class="flex items-center text-sm text-slate-500 mt-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Thursday, May 8, 2025</span>
+          </div>
+        </div>
+
+        <!-- Right side: User Profile (placeholder) -->
+        <div class="flex items-center">
+          <!-- User profile section can be added here if needed -->
+        </div>
+      </div>
+    </header>
+<!-- Main Content Body --><div class="p-6">
+  <h2 class="text-xl font-bold mb-4">User Credentials</h2>
+  <table class="w-full table-auto border">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="px-4 py-2">Name</th>
+        <th class="px-4 py-2">Email</th>
+        <th class="px-4 py-2">Employee ID</th>
+        <th class="px-4 py-2">Group ID</th>
+        <th class="px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let emp of filteredProfiles()" class="border-t">
+        <td class="px-4 py-2">{{ emp.name }}</td>
+        <td class="px-4 py-2">{{ emp.email }}</td>
+        <td class="px-4 py-2">{{ emp.employee_id }}</td>
+        <td class="px-4 py-2">{{ emp.grp_id }}</td>
+        <td class="px-4 py-2">
+          <button (click)="deleteProfile(emp.email)" class="text-red-600 hover:underline">Delete</button>
+    <button 
+  (click)="toggleUserSession(emp.email, emp.status)" 
+  [disabled]="emp.isUpdating"
+>
+  {{ emp.status === 'paused' ? 'Activate' : 'Pause' }}
+  <span *ngIf="emp.isUpdating">...</span>
+</button>
+
+
+
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+

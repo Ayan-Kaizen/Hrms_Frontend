@@ -1,0 +1,25 @@
+.workspace-link {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.workspace-link-item {
+  display: block;
+  width: 100%;
+  padding: 12px 0;
+  text-align: center;
+  font-size: 1rem;
+  color: #1d4ed8; /* Blue color */
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent; /* Border to make it look like a button */
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.workspace-link-item:hover {
+  background-color: #1d4ed8; /* Blue background on hover */
+  color: #fff; /* White text when hovered */
+  transform: scale(1.05); /* Slight scale effect for the hover */
+}

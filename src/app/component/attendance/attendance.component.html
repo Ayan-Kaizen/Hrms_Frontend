@@ -1,0 +1,71 @@
+<div class="flex h-screen bg-white-100">
+
+  <div class="w-full md:w-1/6 bg-blue-500 text-white p-4 flex flex-col justify-between">
+    <div class="text-center mb-6">
+      <img src="assets/logo.jpg" alt="Company Logo" class="mx-auto w-32">
+    </div>
+    <ul class="space-y-4">
+      <li><a href="#" class="sidebar-link">Home</a></li>
+      <li><a href="#" class="sidebar-link">My Account</a></li>
+      <li><a href="#" class="sidebar-link">My Attendance</a></li>
+      <li><a href="#" class="sidebar-link">WorkScape</a></li>
+      <li><a href="#" class="sidebar-link">Training</a></li>
+    </ul>
+    <div class="text-center mb-6">
+      <div class="profile-link">
+        <a href="#" class="sidebar-link">Inbox</a>
+      </div>
+      <div class="profile-link">
+        <a href="#" class="sidebar-link">Logout</a>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="flex-1 p-6">
+
+    <header class="flex justify-between items-center mb-6">
+      <div class="text-2xl font-semibold text-blue-600">Attendance Details</div>
+    </header>
+
+
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+      <h3 class="font-semibold text-xl mb-4">Attendance Overview</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-blue-100 p-4 rounded-lg">
+          <div class="font-semibold text-lg">Total Days</div>
+          <div class="text-2xl">{{ totalDays }}</div>
+        </div>
+        <div class="bg-blue-100 p-4 rounded-lg">
+          <div class="font-semibold text-lg">Total Absent</div>
+          <div class="text-2xl">{{ totalAbsent }}</div>
+        </div>
+        <div class="bg-blue-100 p-4 rounded-lg">
+          <div class="font-semibold text-lg">Attendance Percentage</div>
+          <div class="text-2xl">{{ attendancePercentage }}%</div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <h3 class="font-semibold text-xl mb-4">Attendance Records</h3>
+      <table class="min-w-full table-auto border-collapse">
+        <thead>
+          <tr>
+            <th class="border-b px-4 py-2 text-left">Serial No.</th>
+            <th class="border-b px-4 py-2 text-left">Date</th>
+            <th class="border-b px-4 py-2 text-left">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of attendanceData; let i = index">
+            <td class="border-b px-4 py-2">{{ i + 1 }}</td>
+            <td class="border-b px-4 py-2">{{ record.date }}</td>
+            <td class="border-b px-4 py-2">{{ record.status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

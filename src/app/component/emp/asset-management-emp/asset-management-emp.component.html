@@ -1,0 +1,597 @@
+<div class="flex h-screen bg-white">
+  <!-- Sidebar -->
+  <app-emp-side-navbar></app-emp-side-navbar>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col transition-all duration-300 ease-in-out overflow-hidden"
+    [ngClass]="{
+      'w-20': isSidebarMinimized,
+      'md:w-1/6': !isSidebarMinimized
+    }">
+    
+    <header class="bg-white backdrop-blur-sm bg-opacity-90 border-b border-slate-200/60 shadow-sm px-6 py-4 sticky top-0 z-10">
+      <div class="max-w-20xl mx-auto flex justify-between items-center">
+        <!-- Left side: Greeting -->
+        <div>
+          <h1 class="text-xl font-semibold text-slate-800">
+            Welcome Back, <span class="text-indigo-600 font-bold">{{ user.name ? user.name : 'Employee' }}</span>
+          </h1>
+        </div>
+
+        <!-- Right side: User Profile -->
+        <div class="flex items-center">
+          <div class="relative group">
+            <button class="flex items-center space-x-3 focus:outline-none">
+              <div class="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 ring-2 ring-white flex items-center justify-center text-white font-bold shadow-sm">
+                {{ user.name ? user.name.charAt(0) : 'E' }}
+              </div>
+              <div class="hidden md:block text-left">
+                <p class="text-sm font-medium text-slate-700 leading-tight">{{ user.name ? user.name : 'Employee' }}</p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 hidden md:block" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-20 border border-slate-200 hidden group-hover:block">
+              <a (click)="logout()" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <div class="flex-1 p-6 bg-gray-50 overflow-auto">
+      <!-- Asset Management Tabs -->
+      <div class="flex border-b border-gray-200 mb-6">
+        <button 
+          class="px-4 py-2 font-medium text-sm focus:outline-none"
+          [ngClass]="{
+            'text-indigo-600 border-b-2 border-indigo-600': activeTab === 'my-assets',
+            'text-gray-500 hover:text-gray-700': activeTab !== 'my-assets'
+          }"
+          (click)="setActiveTab('my-assets')">
+          My Assets
+        </button>
+        <button 
+          class="px-4 py-2 font-medium text-sm focus:outline-none"
+          [ngClass]="{
+            'text-indigo-600 border-b-2 border-indigo-600': activeTab === 'my-tickets',
+            'text-gray-500 hover:text-gray-700': activeTab !== 'my-tickets'
+          }"
+          (click)="setActiveTab('my-tickets')">
+          My Tickets
+        </button>
+        <button 
+          class="px-4 py-2 font-medium text-sm focus:outline-none"
+          [ngClass]="{
+            'text-indigo-600 border-b-2 border-indigo-600': activeTab === 'activity-logs',
+            'text-gray-500 hover:text-gray-700': activeTab !== 'activity-logs'
+          }"
+          (click)="setActiveTab('activity-logs')">
+          Activity Logs
+        </button>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <span class="ml-2 text-gray-600">Loading...</span>
+      </div>
+
+      <!-- Content based on active tab -->
+      <div *ngIf="!isLoading">
+        <!-- My Assets Section -->
+        <div *ngIf="activeTab === 'my-assets'">
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 mb-6">
+            <div class="p-6">
+              <h2 class="text-xl font-bold text-gray-800 mb-4">My Assets</h2>
+              
+              <!-- Assets Table -->
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset ID</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Device Name</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial No</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned Date</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <tr *ngFor="let asset of myAssets">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">{{ asset.asset_id }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ asset.name }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ asset.type }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ asset.brand }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ asset.model }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ asset.serial_no }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ asset.created_at | date:'mediumDate' }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" 
+                          [ngClass]="{
+                            'bg-green-100 text-green-800': asset.status === 'Allocated',
+                            'bg-yellow-100 text-yellow-800': asset.status === 'Available',
+                            'bg-red-100 text-red-800': asset.status === 'Maintenance'
+                          }">
+                          {{ asset.status }}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr *ngIf="myAssets.length === 0">
+                      <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">No assets assigned to you.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Raise Ticket Button -->
+          <div class="flex justify-end mb-6">
+            <button 
+              (click)="openRaiseTicketModal()"
+              [disabled]="myAssets.length === 0"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Raise a Ticket
+            </button>
+          </div>
+        </div>
+
+        <!-- My Tickets Section (Updated) -->
+        <div *ngIf="activeTab === 'my-tickets'">
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+            <div class="p-6">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800">My Tickets</h2>
+                <button 
+                  (click)="refreshTickets()"
+                  class="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center space-x-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>Refresh</span>
+                </button>
+              </div>
+              
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticket ID</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset ID</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recent Update</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created Date</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <tr *ngFor="let ticket of myTicketsWithUpdates">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">
+                        <a (click)="openActivityLogModal(ticket)" class="hover:text-indigo-800 cursor-pointer">
+                          {{ ticket.ticket_id }}
+                        </a>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ticket.asset_id }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ticket.model }}</td>
+                      <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{{ ticket.issue_description }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" 
+                          [ngClass]="{
+                            'bg-green-100 text-green-800': ticket.status === 'Closed',
+                            'bg-yellow-100 text-yellow-800': ticket.status === 'Under Review',
+                            'bg-blue-100 text-blue-800': ticket.status === 'Open',
+                            'bg-red-100 text-red-800': ticket.status === 'Escalated'
+                          }">
+                          {{ ticket.status }}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 text-sm text-gray-500 max-w-xs">
+                        <div *ngIf="ticket.latest_update" class="space-y-1">
+                          <p class="truncate">{{ ticket.latest_update.message }}</p>
+                          <p class="text-xs text-gray-400">{{ ticket.latest_update.date | date:'short' }}</p>
+                          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                                [ngClass]="{
+                                  'bg-purple-100 text-purple-800': ticket.latest_update.is_hr,
+                                  'bg-blue-100 text-blue-800': !ticket.latest_update.is_hr
+                                }">
+                            {{ ticket.latest_update.is_hr ? 'HR Update' : 'Your Update' }}
+                          </span>
+                        </div>
+                        <span *ngIf="!ticket.latest_update" class="text-gray-400 text-xs">No updates</span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ticket.created_at | date:'mediumDate' }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <!-- Three Dots Menu -->
+                        <div class="relative inline-block text-left">
+                          <button 
+                            (click)="toggleTicketMenu(ticket.ticket_id)"
+                            class="inline-flex justify-center w-full shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                            </svg>
+                          </button>
+
+                          <!-- Dropdown Menu -->
+                          <div *ngIf="openTicketMenuId === ticket.ticket_id" 
+                               class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                            <div class="py-1">
+                              <button 
+                                (click)="openActivityLogModal(ticket); closeTicketMenu()"
+                                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                View Activity Log
+                              </button>
+                              <button 
+                                *ngIf="ticket.status !== 'Closed'"
+                                (click)="openUpdateTicketModal(ticket); closeTicketMenu()"
+                                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Update Ticket
+                              </button>
+                              <button 
+                                *ngIf="ticket.status === 'Open'"
+                                (click)="cancelTicket(ticket.ticket_id); closeTicketMenu()"
+                                class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Cancel Ticket
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr *ngIf="myTicketsWithUpdates.length === 0">
+                      <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">No tickets raised yet.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Logs Section (Updated to group by ticket) -->
+        <div *ngIf="activeTab === 'activity-logs'">
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                  <div class="bg-indigo-100 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                  </div>
+                  <h2 class="text-xl font-bold text-gray-800">Activity Logs by Ticket</h2>
+                </div>
+                
+                <button 
+                  (click)="loadActivityLogsByTicket()"
+                  class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center space-x-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>Refresh</span>
+                </button>
+              </div>
+
+              <!-- Loading Indicator -->
+              <div *ngIf="isLoadingActivityLogs" class="flex justify-center items-center py-8">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                <span class="ml-2 text-gray-600">Loading activity logs...</span>
+              </div>
+
+              <!-- Activity Logs Grouped by Ticket -->
+              <div *ngIf="!isLoadingActivityLogs && groupedActivityLogs.length > 0" class="space-y-6">
+                <div *ngFor="let ticketGroup of groupedActivityLogs" class="border rounded-lg p-4">
+                  <!-- Ticket Header -->
+                  <div class="flex items-center justify-between mb-4 pb-2 border-b">
+                    <div class="flex items-center space-x-3">
+                      <div class="bg-blue-100 p-2 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ ticketGroup.ticket_id }}</h3>
+                        <p class="text-sm text-gray-500">{{ ticketGroup.activities.length }} activities</p>
+                      </div>
+                    </div>
+                    <button 
+                      (click)="toggleTicketActivities(ticketGroup.ticket_id)"
+                      class="text-indigo-600 hover:text-indigo-800 flex items-center space-x-1">
+                      <span>{{ expandedTicketIds.has(ticketGroup.ticket_id) ? 'Hide' : 'Show' }} Activities</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform" 
+                           [ngClass]="{ 'transform rotate-180': expandedTicketIds.has(ticketGroup.ticket_id) }"
+                           fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <!-- Activities Timeline -->
+                  <div *ngIf="expandedTicketIds.has(ticketGroup.ticket_id)" class="space-y-3">
+                    <div *ngFor="let activity of ticketGroup.activities" 
+                         class="relative border-l-2 border-gray-200 ml-4 pl-6 pb-4">
+                      
+                      <!-- Activity Timeline Dot -->
+                      <div class="absolute -left-2 mt-1.5 h-3 w-3 rounded-full border-2 border-white"
+                           [ngClass]="getActionTypeColorClass(activity.action_type)"></div>
+                      
+                      <!-- Activity Content -->
+                      <div class="bg-gray-50 rounded-lg p-3">
+                        <div class="flex justify-between items-start mb-2">
+                          <div>
+                            <h4 class="text-sm font-medium text-gray-900">{{ getActionTypeDisplayName(activity.action_type) }}</h4>
+                            <p class="text-xs text-gray-500">{{ activity.created_at | date:'medium' }}</p>
+                          </div>
+                          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                                [ngClass]="{
+                                  'bg-purple-100 text-purple-800': activity.performed_by === 'HR',
+                                  'bg-green-100 text-green-800': activity.performed_by !== 'HR'
+                                }">
+                            {{ activity.performed_by === 'HR' ? 'HR' : 'You' }}
+                          </span>
+                        </div>
+                        
+                        <p class="text-sm text-gray-700 mb-2">{{ activity.action_description }}</p>
+                        
+                        <!-- Additional Data -->
+                        <div *ngIf="activity.additional_data" class="mt-2">
+                          <button 
+                            (click)="toggleActivityAdditionalData(activity.id)"
+                            class="text-xs text-indigo-600 hover:text-indigo-800 flex items-center space-x-1">
+                            <span>{{ expandedActivityIds.has(activity.id) ? 'Hide' : 'Show' }} Details</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                          
+                          <div *ngIf="expandedActivityIds.has(activity.id)" class="mt-2 p-2 bg-white rounded border">
+                            <pre class="text-xs text-gray-600 whitespace-pre-wrap">{{ formatAdditionalData(activity.additional_data) }}</pre>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Empty State -->
+              <div *ngIf="!isLoadingActivityLogs && groupedActivityLogs.length === 0" class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No activity logs found</h3>
+                <p class="mt-1 text-sm text-gray-500">Your ticket activity history will appear here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Raise Ticket Modal -->
+<div *ngIf="isRaiseTicketModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md max-h-screen overflow-y-auto">
+    <h3 class="text-xl font-semibold mb-4">Raise a Ticket</h3>
+    
+    <form (ngSubmit)="submitTicket()" enctype="multipart/form-data">
+      <!-- Device Selection -->
+      <div class="mb-4">
+        <label for="device" class="block text-sm font-medium text-gray-700">Select Device</label>
+        <select 
+          id="device" 
+          [(ngModel)]="ticketRequest.deviceId" 
+          name="deviceId" 
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          required>
+          <option value="">Select a device</option>
+          <option *ngFor="let asset of myAssets" [value]="asset.asset_id">
+            {{ asset.name }} - {{ asset.asset_id }} ({{ asset.serial_no }})
+          </option>
+        </select>
+      </div>
+
+      <!-- Issue Description -->
+      <div class="mb-4">
+        <label for="description" class="block text-sm font-medium text-gray-700">Issue Description</label>
+        <textarea 
+          id="description" 
+          [(ngModel)]="ticketRequest.description" 
+          name="description" 
+          rows="4" 
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="Please describe the issue in detail..."
+          required></textarea>
+      </div>
+
+      <!-- File Upload -->
+      <div class="mb-4">
+        <label for="proof" class="block text-sm font-medium text-gray-700">Upload Evidence (Optional)</label>
+        <input 
+          type="file" 
+          id="proof" 
+          (change)="onFileSelected($event)" 
+          accept="image/*,video/*" 
+          class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+        >
+        <p class="text-xs text-gray-500 mt-1">Max file size: 5MB. Supported formats: Images and Videos</p>
+        
+        <div *ngIf="fileError" class="text-red-500 text-xs mt-1">{{ fileError }}</div>
+        <div *ngIf="selectedFile" class="text-green-600 text-xs mt-1">
+          File selected: {{ selectedFile.name }} ({{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB)
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-between mt-6">
+        <button 
+          type="button" 
+          (click)="closeRaiseTicketModal()" 
+          class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400">
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          [disabled]="!ticketRequest.deviceId || !ticketRequest.description || isSubmitting || !!fileError"
+          class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="isSubmitting">Submitting...</span>
+          <span *ngIf="!isSubmitting">Submit Ticket</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Update Ticket Modal -->
+<div *ngIf="isUpdateTicketModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md max-h-screen overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold">Update Ticket</h3>
+      <button (click)="closeUpdateTicketModal()" class="text-gray-500 hover:text-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <div *ngIf="selectedTicketForUpdate" class="mb-4 p-4 bg-gray-50 rounded-lg">
+      <h4 class="font-medium text-gray-800">Ticket Details</h4>
+      <p class="text-sm text-gray-600">Ticket ID: {{ selectedTicketForUpdate.ticket_id }}</p>
+      <p class="text-sm text-gray-600">Asset ID: {{ selectedTicketForUpdate.asset_id }}</p>
+      <p class="text-sm text-gray-600">Status: {{ selectedTicketForUpdate.status }}</p>
+    </div>
+    
+    <form (ngSubmit)="submitTicketUpdate()">
+      <!-- Update Message -->
+      <div class="mb-4">
+        <label for="updateMessage" class="block text-sm font-medium text-gray-700">Your Response/Update</label>
+        <textarea 
+          id="updateMessage" 
+          [(ngModel)]="ticketUpdateRequest.message" 
+          name="message" 
+          rows="4" 
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="Provide additional information or response to HR..."
+          required></textarea>
+      </div>
+
+      <!-- File Upload for Update -->
+      <div class="mb-4">
+        <label for="updateProof" class="block text-sm font-medium text-gray-700">Upload Additional Evidence (Optional)</label>
+        <input 
+          type="file" 
+          id="updateProof" 
+          (change)="onUpdateFileSelected($event)" 
+          accept="image/*,video/*" 
+          class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+        >
+        <p class="text-xs text-gray-500 mt-1">Max file size: 5MB. Supported formats: Images and Videos</p>
+        
+        <div *ngIf="updateFileError" class="text-red-500 text-xs mt-1">{{ updateFileError }}</div>
+        <div *ngIf="selectedUpdateFile" class="text-green-600 text-xs mt-1">
+          File selected: {{ selectedUpdateFile.name }} ({{ (selectedUpdateFile.size / 1024 / 1024).toFixed(2) }} MB)
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-between mt-6">
+        <button 
+          type="button" 
+          (click)="closeUpdateTicketModal()" 
+          class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400">
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          [disabled]="!ticketUpdateRequest.message || isSubmittingUpdate || !!updateFileError"
+          class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="isSubmittingUpdate">Submitting...</span>
+          <span *ngIf="!isSubmittingUpdate">Submit Update</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Activity Log Modal -->
+<div *ngIf="isActivityLogModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl max-h-screen overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold">Activity Log for Ticket {{ selectedTicket?.ticket_id }}</h3>
+      <button (click)="closeActivityLogModal()" class="text-gray-500 hover:text-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <div *ngIf="selectedTicket" class="mb-4 p-4 bg-gray-50 rounded-lg">
+      <h4 class="font-medium text-gray-800">Ticket Details</h4>
+      <p class="text-sm text-gray-600">Asset ID: {{ selectedTicket.asset_id }}</p>
+      <p class="text-sm text-gray-600">Model: {{ selectedTicket.model }}</p>
+      <p class="text-sm text-gray-600">Status: 
+        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" 
+          [ngClass]="{
+            'bg-green-100 text-green-800': selectedTicket.status === 'Closed',
+            'bg-yellow-100 text-yellow-800': selectedTicket.status === 'Under Review',
+            'bg-blue-100 text-blue-800': selectedTicket.status === 'Open',
+            'bg-red-100 text-red-800': selectedTicket.status === 'Escalated'
+          }">
+          {{ selectedTicket.status }}
+        </span>
+      </p>
+      <p class="text-sm text-gray-600">Description: {{ selectedTicket.issue_description }}</p>
+    </div>
+    
+    <div class="border-l-2 border-gray-200 ml-4 pl-6 pb-10" *ngIf="selectedTicketActivities.length > 0">
+      <div *ngFor="let activity of selectedTicketActivities" class="relative mb-6">
+        <div class="absolute -left-7 mt-1.5 h-3.5 w-3.5 rounded-full border border-white bg-indigo-600"></div>
+        
+        <div class="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm font-medium text-gray-900">{{ activity.user }}</span>
+            <span class="text-xs text-gray-500">{{ activity.date | date:'medium' }}</span>
+          </div>
+          
+          <p class="text-sm text-gray-700 mb-2">{{ activity.message }}</p>
+          
+          <div *ngIf="activity.attachments && activity.attachments.length > 0" class="mt-2">
+            <p class="text-xs font-medium text-gray-500 mb-1">Attachments:</p>
+            <div class="flex flex-wrap gap-2">
+              <span *ngFor="let attachment of activity.attachments" class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                {{ attachment }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="selectedTicketActivities.length === 0" class="text-center py-8 text-gray-500">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-2"></div>
+      Loading activity log...
+    </div>
+  </div>
+</div>

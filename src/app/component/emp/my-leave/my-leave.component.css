@@ -1,0 +1,135 @@
+/* Sidebar Base */
+.sidebar-link,
+.profile-link a {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  text-align: left;
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-link:hover,
+.profile-link a:hover {
+  background: linear-gradient(135deg, #1e3a8a, #2c2c2c);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* Sidebar Toggle Button */
+button {
+  background-color: #ffffff;
+  color: #2563eb;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+  background-color: #e0e7ff;
+}
+
+/* Logo */
+img {
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.2);
+}
+
+/* Workspace Links in Tiles */
+.workspace-link {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.workspace-link-item {
+  display: block;
+  width: 100%;
+  padding: 10px 0;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.workspace-link-item:hover {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  transform: scale(1.05);
+}
+
+/* Tile Styling */
+.grid > div {
+  background: linear-gradient(135deg, #eff6ff, #ffffff);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.grid > div:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Tile Headings and Paragraphs */
+.grid h3 {
+  font-size: 1.25rem;
+  color: #1e3a8a;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.grid p {
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+/* Header Text */
+header .text-2xl {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+.cancel-btn {
+  background-color: rgb(219, 21, 21);
+  color: white;
+  border: 1px solid rgb(0, 0, 0);
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.cancel-btn:hover {
+  background-color: rgb(80, 18, 18);
+  transform: scale(1.05);
+}
+
+.cancel-btn:focus {
+  outline: none;
+}
+
+
+
+/* Responsive Grid */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+

@@ -1,0 +1,259 @@
+/* Modern Calendar Styling */
+.calendar-container {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  background: #ffffff;
+}
+
+/* Calendar Header Days */
+.calendar-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.calendar-header-day {
+  padding: 16px 8px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: transparent;
+}
+
+/* Calendar Day Cells */
+.calendar-day {
+  min-height: 100px;
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.calendar-day:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
+  border-color: #e2e8f0;
+  z-index: 10;
+}
+
+.calendar-day-content {
+  padding: 12px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.calendar-day-number {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+/* Today Styling */
+.calendar-day.today {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: #3b82f6;
+}
+
+.calendar-day.today .calendar-day-number {
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+/* Other Month Days */
+.calendar-day.other-month {
+  background: #fafafa;
+  opacity: 0.6;
+}
+
+.calendar-day.other-month .calendar-day-number {
+  color: #9ca3af;
+}
+
+/* Leave Intensity Classes - Modern Gradients */
+.calendar-day.leave-light {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important;
+  border-color: #f87171;
+}
+
+.calendar-day.leave-light .calendar-day-number {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.calendar-day.leave-medium {
+  background: linear-gradient(135deg, #fca5a5 0%, #f87171 100%) !important;
+  border-color: #ef4444;
+}
+
+.calendar-day.leave-medium .calendar-day-number {
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day.leave-heavy {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  border-color: #b91c1c;
+}
+
+.calendar-day.leave-heavy .calendar-day-number {
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Leave Badge */
+.leave-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day.leave-light .leave-badge {
+  background: rgba(220, 38, 38, 0.9);
+}
+
+.calendar-day.leave-medium .leave-badge,
+.calendar-day.leave-heavy .leave-badge {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f2937;
+}
+
+/* Calendar Grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+/* Legend Styling */
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 24px;
+  padding: 16px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.legend-text {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Tooltip Enhancements */
+.leave-tooltip {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 16px;
+  max-width: 320px;
+  backdrop-filter: blur(8px);
+}
+
+.tooltip-header {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.tooltip-content {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.tooltip-leave-item {
+  border-left: 4px solid #ef4444;
+  padding-left: 12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-radius: 0 8px 8px 0;
+  transition: all 0.2s ease;
+}
+
+.tooltip-leave-item:hover {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  transform: translateX(2px);
+}
+
+.tooltip-email {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 0.875rem;
+}
+
+.tooltip-type {
+  color: #6b7280;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+.tooltip-dates {
+  color: #6b7280;
+  font-size: 0.6875rem;
+  margin-top: 4px;
+}
+
+.tooltip-reason {
+  color: #6b7280;
+  font-size: 0.6875rem;
+  margin-top: 4px;
+}
+
+/* Animation for calendar load */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.calendar-day {
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+.calendar-day:nth-child(n) {
+  animation-delay: calc(var(--delay, 0) * 20ms);
+}

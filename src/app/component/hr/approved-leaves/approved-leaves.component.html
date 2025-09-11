@@ -1,0 +1,197 @@
+<!-- Modern HRMS Approved Leaves Page -->
+<div class="flex min-h-screen bg-gray-50">
+  <!-- Sidebar -->
+ <app-hr-side-navbar class="w-64"></app-hr-side-navbar> 
+
+ 
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col transition-all duration-300 ease-in-out overflow-hidden">
+    <header class="bg-white backdrop-blur-sm bg-opacity-90 border-b border-slate-200/60 shadow-sm px-6 py-4 sticky top-0 z-10">
+      <div class="max-w-20xl mx-auto flex justify-between items-center">
+        <!-- Left side: Header Title -->
+        <div>
+          <h1 class="text-xl font-semibold text-slate-800">
+            Approved Leaves
+          </h1>
+          <div class="flex items-center text-sm text-slate-500 mt-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Thursday, May 8, 2025</span>
+          </div>
+        </div>
+
+        <!-- Right side: User Profile (placeholder) -->
+        <div class="flex items-center">
+          <!-- User profile section can be added here if needed -->
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <div class="flex-1 p-6 bg-gray-50 overflow-auto">
+
+      <!-- Approved Leaves Table Section -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 transition duration-300 hover:shadow-md mb-6">
+        <div class="h-2 bg-emerald-600"></div>
+        <div class="p-6">
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="bg-emerald-100 p-2 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <h3 class="font-bold text-xl text-gray-800">Approved Leave Requests</h3>
+          </div>
+
+          <!-- Table Section -->
+          <div class="overflow-x-auto">
+            <table class="min-w-full table-auto border-collapse">
+              <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Leave Type</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">From Date</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">To Date</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let leave of filteredLeaveRequests" class="hover:bg-gray-50 transition duration-150">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ leave.emailId }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ leave.leaveType }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ leave.fromDate | date }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ leave.toDate | date }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ leave.reason || '—' }}</td>
+                  
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      {{ leave.status }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <button
+                      *ngIf="leave.status === 'Approved'"
+                      (click)="rejectLeave(leave.id)"
+                      class="text-red-600 hover:text-red-800 text-xs font-semibold px-3 py-1 border border-red-500 rounded transition"
+                    >
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar Section -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 transition duration-300 hover:shadow-md">
+        <div class="h-2 bg-indigo-600"></div>
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-3">
+              <div class="bg-indigo-100 p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <h3 class="font-bold text-xl text-gray-800">Leave Calendar</h3>
+            </div>
+            
+            <!-- Calendar Controls -->
+            <div class="flex items-center space-x-4">
+              <button (click)="goToToday()" class="px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition duration-200">
+                Today
+              </button>
+              <div class="flex items-center space-x-2">
+                <button (click)="previousMonth()" class="p-2 text-gray-400 hover:text-gray-600 transition duration-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                <h4 class="text-lg font-semibold text-gray-800 min-w-[160px] text-center">
+                  {{ monthNames[currentDate.getMonth()] }} {{ currentDate.getFullYear() }}
+                </h4>
+                <button (click)="nextMonth()" class="p-2 text-gray-400 hover:text-gray-600 transition duration-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modern Calendar Grid -->
+          <div class="calendar-container">
+            <!-- Day Names Header -->
+            <div class="calendar-grid calendar-header">
+              <div *ngFor="let day of dayNames" class="calendar-header-day">
+                {{ day }}
+              </div>
+            </div>
+
+            <!-- Calendar Days -->
+            <div class="calendar-grid">
+              <div 
+                *ngFor="let day of calendarDays; let i = index" 
+                class="calendar-day"
+                [class.today]="day.isToday"
+                [class.other-month]="!day.isCurrentMonth"
+                [class.leave-light]="day.leaveCount === 1"
+                [class.leave-medium]="day.leaveCount === 2"
+                [class.leave-heavy]="day.leaveCount >= 3"
+                [style.--delay]="i"
+                (mouseenter)="showTooltip($event, day.leaves)"
+                (mouseleave)="hideTooltip()"
+              >
+                <div class="calendar-day-content">
+                  <span class="calendar-day-number">
+                    {{ day.day }}
+                  </span>
+                  
+                  <div *ngIf="day.leaveCount > 0" class="leave-badge">
+                    {{ day.leaveCount }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Enhanced Tooltip -->
+<div 
+  *ngIf="tooltip.show" 
+  class="fixed z-50 leave-tooltip"
+  [style.left.px]="tooltip.x"
+  [style.top.px]="tooltip.y"
+>
+  <div class="tooltip-header">
+    Leave Details ({{ tooltip.leaves.length }} {{ tooltip.leaves.length === 1 ? 'person' : 'people' }})
+  </div>
+  
+  <div class="tooltip-content">
+    <div *ngFor="let leave of tooltip.leaves" class="tooltip-leave-item">
+      <div class="tooltip-email">{{ leave.emailId }}</div>
+      <div class="tooltip-type">{{ leave.leaveType }}</div>
+      <div class="tooltip-dates">
+        {{ formatDate(leave.fromDate) }} - {{ formatDate(leave.toDate) }}
+        <span class="ml-2 font-semibold">({{ getDurationText(leave.fromDate, leave.toDate) }})</span>
+      </div>
+      <div *ngIf="leave.reason" class="tooltip-reason">
+        <span class="font-medium">Reason:</span> {{ leave.reason }}
+      </div>
+    </div>
+  </div>
+</div>
+
+

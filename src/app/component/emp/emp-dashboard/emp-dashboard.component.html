@@ -1,0 +1,98 @@
+<!-- Modern HRMS Dashboard with preserved functionality -->
+<div class="flex min-h-screen bg-gray-50">
+  <!-- Sidebar -->
+<app-emp-side-navbar></app-emp-side-navbar>
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col transition-all duration-300 ease-in-out overflow-hidden"
+      [ngClass]="{
+       'w-20': isSidebarMinimized,
+       'md:w-1/6': !isSidebarMinimized
+      }">
+    <header class="bg-white backdrop-blur-sm bg-opacity-90 border-b border-slate-200/60 shadow-sm px-6 py-4 sticky top-0 z-10">
+      <div class="max-w-20xl mx-auto flex justify-between items-center">
+        <!-- Left side: Greeting (Toggle button removed) -->
+        <div>
+          <h1 class="text-xl font-semibold text-slate-800">
+            Welcome back, <span class="text-indigo-600 font-bold">{{ users.name ? users.name : 'Employee' }}</span>
+          </h1>
+         
+        </div>
+
+        <!-- Right side: User Profile -->
+        <div class="flex items-center">
+          <div class="relative group">
+            <button class="flex items-center space-x-3 focus:outline-none">
+              <div class="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 ring-2 ring-white flex items-center justify-center text-white font-bold shadow-sm">
+                {{ users.name ? users.name.charAt(0) : 'E' }}
+              </div>
+              <div class="hidden md:block text-left">
+                <p class="text-sm font-medium text-slate-700 leading-tight">{{ users.name ? users.name : 'Employee' }}</p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 hidden md:block" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-20 border border-slate-200 hidden group-hover:block">
+              <a (click)="logout()" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <div class="flex-1 p-6 bg-gray-50 overflow-auto">
+
+
+      <!-- Tiles -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Profile Tile -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 transition duration-300 hover:shadow-md">
+          <div class="h-2 bg-indigo-600"></div>
+          <div class="p-6">
+            <div class="flex items-center space-x-3 mb-4">
+              <div class="bg-indigo-100 p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <h3 class="font-bold text-xl text-gray-800">Profile</h3>
+            </div>
+            <p class="text-gray-600 mb-4">View and manage your personal information, contact details, and preferences</p>
+            <div class="mt-4">
+              <a href="/profile" class="inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 text-sm">
+                View
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leaves Tile -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 transition duration-300 hover:shadow-md">
+          <div class="h-2 bg-emerald-600"></div>
+          <div class="p-6">
+            <div class="flex items-center space-x-3 mb-4">
+              <div class="bg-emerald-100 p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <h3 class="font-bold text-xl text-gray-800">Leaves</h3>
+            </div>
+            <p class="text-gray-600 mb-4">View your leave history, check balances, and submit new leave requests</p>
+            <div class="mt-4">
+              <a href="/my-leaves" class="inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200 text-sm">
+                View / Apply
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

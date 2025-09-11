@@ -1,0 +1,64 @@
+.workspace-link {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.workspace-link-item {
+  display: block;
+  width: 100%;
+  padding: 12px 0;
+  text-align: center;
+  font-size: 1rem;
+  color: #1d4ed8;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.workspace-link-item:hover {
+  background-color: #1d4ed8;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.sidebar-link {
+  display: block;
+  width: 100%;
+  padding: 12px 0;
+  text-align: center;
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 450;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.sidebar-link:hover {
+  background-color: #ffffff;
+  color: #000;
+  transform: scale(1.05);
+}
+
+.profile-link a {
+  padding: 12px 0;
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 450;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+  border-radius: 8px;
+}
+
+.profile-link a:hover {
+  background-color: #ffffff;
+  color: #000;
+  transform: scale(1.05);
+}
