@@ -215,7 +215,7 @@
         <!-- Profile Header -->
         <div class="flex flex-col items-center text-center mb-10">
           <img
-            [src]="'http://localhost:3000/uploads/' + userDetails.profileImage"
+            [src]="'https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/uploads/' + userDetails.profileImage"
             alt="Profile Image"
             class="w-32 h-32 rounded-full object-cover border-4 border-blue-400 shadow-md hover:scale-105 transition-transform"
           />
@@ -290,7 +290,7 @@
                   class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:shadow-md transition">
                   <p class="font-medium">{{ doc.documentType }}</p>
                   <a
-                    [href]="'http://localhost:3000/uploads/' + doc.documentPath"
+                    [href]="'https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/uploads/' + doc.documentPath"
                     target="_blank"
                     class="text-blue-600 hover:underline text-sm mt-1 inline-block"
                   >View</a>

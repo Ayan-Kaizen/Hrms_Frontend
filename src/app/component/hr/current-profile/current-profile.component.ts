@@ -94,7 +94,7 @@ export class CurrentProfileComponent implements OnInit {
       if (doc && doc.documentPath && doc.documentPath.trim() !== '' &&
           doc.documentType && doc.documentType.trim() !== '') {
 
-        const fileUrl = `http://localhost:3000/uploads/${doc.documentPath}`;
+        const fileUrl = `https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/uploads/${doc.documentPath}`;
         try {
           // Use HEAD request to check existence without downloading the full file content
           // 'no-store' cache prevents browser from using stale cached responses

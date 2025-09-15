@@ -122,7 +122,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
               <tr *ngFor="let emp of filteredProfiles()" class="hover:bg-gray-50 transition duration-150">
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <img *ngIf="emp.profile_image" [src]="'http://localhost:3000/uploads/' + emp.profile_image" alt="Profile" class="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100">
+                  <img *ngIf="emp.profile_image" [src]="'https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/uploads/' + emp.profile_image" alt="Profile" class="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100">
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ emp.employee_id }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ emp.name }}</td>
@@ -161,7 +161,7 @@
 
       <div class="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6 pt-2">
         <div class="w-24 h-24 rounded-full overflow-hidden ring-4 ring-indigo-100 shadow-md">
-          <img *ngIf="selectedProfile.profile_image" [src]="'http://localhost:3000/uploads/' + selectedProfile.profile_image" alt="Profile" class="w-full h-full object-cover">
+          <img *ngIf="selectedProfile.profile_image" [src]="'https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/uploads/' + selectedProfile.profile_image" alt="Profile" class="w-full h-full object-cover">
         </div>
         <div>
           <h2 class="text-2xl font-bold text-indigo-700">{{ selectedProfile.name }}</h2>

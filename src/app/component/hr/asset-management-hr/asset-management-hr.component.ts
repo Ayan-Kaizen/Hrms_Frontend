@@ -592,7 +592,7 @@ export class AssetManagementComponent implements OnInit {
               ...ticket,
               evidence: ticket.evidence?.map(e => ({
                 type: e.file_type === 'video' ? 'video' : 'image',
-                url: `http://localhost:3000/uploads/${e.file_path}`,
+                url: `https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/uploads/${e.file_path}`,
                 file_path: e.file_path,
                 file_type: e.file_type
               })) || []
