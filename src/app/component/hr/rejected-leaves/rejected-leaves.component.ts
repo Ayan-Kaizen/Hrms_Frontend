@@ -40,7 +40,7 @@ export class RejectedLeavesComponent implements OnInit {
 
   loadRejectedLeaveRequests(): void {
     // Fetch only rejected leaves from the backend API
-    this.http.get<{ leaveRequests: LeaveRequest[] }>('http://localhost:3000/api/get-rejected-leaves')
+    this.http.get<{ leaveRequests: LeaveRequest[] }>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/get-rejected-leaves')
       .subscribe(response => {
         this.leaveRequests = response.leaveRequests;
       }, error => {
@@ -49,7 +49,7 @@ export class RejectedLeavesComponent implements OnInit {
   }
 
   updateLeaveStatus(leaveId: number, status: string): void {
-    this.http.post<LeaveStatusResponse>('http://localhost:3000/api/update-leave-status', { leaveId, status })
+    this.http.post<LeaveStatusResponse>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/update-leave-status', { leaveId, status })
       .subscribe(response => {
         alert(response.message);
         this.loadRejectedLeaveRequests(); // Refresh list to reflect the changes

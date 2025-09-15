@@ -44,7 +44,7 @@ export class EmployeeDetailsComponent implements OnInit {
 
   // 📥 Fetch employee profiles from API
   fetchProfiles() {
-    this.http.get<any>('http://localhost:3000/api/employee-profiles').subscribe({
+    this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/employee-profiles').subscribe({
       next: (res) => {
         if (res.success) {
           this.employeeProfiles = res.data;
@@ -77,7 +77,7 @@ export class EmployeeDetailsComponent implements OnInit {
   // 🗑️ Delete employee profile by email
   deleteProfile(email: string) {
     if (confirm('Are you sure you want to delete this employee?')) {
-      this.http.delete(`http://localhost:3000/api/employee-profiles/email/${email}`).subscribe({
+      this.http.delete(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/employee-profiles/email/${email}`).subscribe({
         next: () => {
           this.employeeProfiles = this.employeeProfiles.filter(emp => emp.email !== email);
           alert('Employee deleted successfully');

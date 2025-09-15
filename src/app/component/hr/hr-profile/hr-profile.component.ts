@@ -69,7 +69,7 @@ export class HrProfileComponent implements OnInit {
 
     const email = loggedUser.email;
 
-    this.http.get(`http://localhost:3000/api/user/profile?email=${encodeURIComponent(email)}`).subscribe(
+    this.http.get(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/user/profile?email=${encodeURIComponent(email)}`).subscribe(
       (response: any) => {
         this.userDetails = response;
         if (this.userDetails) {
@@ -163,7 +163,7 @@ export class HrProfileComponent implements OnInit {
       formData.append('profileImage', this.file, this.file.name);
     }
 
-    this.http.post('http://localhost:3000/api/profile', formData).subscribe(
+    this.http.post('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/profile', formData).subscribe(
       (response) => {
         console.log('✅ Profile submitted successfully:', response);
         this.formSubmitted = true;

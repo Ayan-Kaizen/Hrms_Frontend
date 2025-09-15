@@ -135,7 +135,7 @@ export class AssetManagementEmpComponent implements OnInit {
   ticketDisplayedColumns: string[] = ['ticket_id', 'asset_id', 'model', 'issue_description', 'status', 'latest_update', 'created_at', 'actions'];
 
   // API Base URL
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = 'https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api';
 
   constructor(
     private http: HttpClient,

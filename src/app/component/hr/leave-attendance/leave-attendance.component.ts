@@ -48,7 +48,7 @@ export class LeaveAttendanceComponent implements OnInit {
   }
 
   loadLeaveRequests(): void {
-    this.http.get<{ leaveRequests: LeaveRequest[] }>('http://localhost:3000/api/get-leave-requests')
+    this.http.get<{ leaveRequests: LeaveRequest[] }>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/get-leave-requests')
       .subscribe(response => {
         this.leaveRequests = response.leaveRequests;
       }, error => {
@@ -57,7 +57,7 @@ export class LeaveAttendanceComponent implements OnInit {
   }
 
   updateLeaveStatus(leaveId: number, status: string): void {
-    this.http.post<LeaveStatusResponse>('http://localhost:3000/api/update-leave-status', { leaveId, status })
+    this.http.post<LeaveStatusResponse>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/update-leave-status', { leaveId, status })
       .subscribe(response => {
         alert(response.message);
         this.loadLeaveRequests(); // Refresh list

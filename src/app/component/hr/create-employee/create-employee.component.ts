@@ -33,7 +33,7 @@ export class CreateEmployeeComponent {
     console.log('Sending employee data:', this.employeeData);
 
     // Send the form data to the backend
-    this.http.post<any>('http://localhost:3000/api/create-employee', this.employeeData).subscribe({
+    this.http.post<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/create-employee', this.employeeData).subscribe({
       next: (res) => {
         if (res.success) {
           alert('Employee created successfully');

@@ -53,7 +53,7 @@ export class MyLeaveComponent implements OnInit {
   openLeaveModal(): void {
     this.isLeaveModalOpen = true;
 
-    this.http.get<any>(`http://localhost:3000/api/remaining-leaves?emailId=${this.user.email}`)
+    this.http.get<any>(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/remaining-leaves?emailId=${this.user.email}`)
       .subscribe({
         next: (res) => {
           this.remainingLeaves = res.remainingLeaves;
@@ -102,9 +102,9 @@ export class MyLeaveComponent implements OnInit {
       return;
     }
 
-    this.http.post('http://localhost:3000/api/leave-requests', this.leaveRequest).subscribe({
+    this.http.post('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/leave-requests', this.leaveRequest).subscribe({
       next: () => {
-        this.http.post('http://localhost:3000/api/update-leave-balance', {
+        this.http.post('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/update-leave-balance', {
           email: this.user.email,
           days: totalDays
         }).subscribe({
@@ -128,7 +128,7 @@ export class MyLeaveComponent implements OnInit {
 
   fetchLeaveRequests(): void {
     const email = this.authService.getLoggedInUserEmail();
-    this.http.get<any[]>(`http://localhost:3000/api/leave-requests-emp?emailId=${email}`)
+    this.http.get<any[]>(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/leave-requests-emp?emailId=${email}`)
       .subscribe({
         next: data => {
           this.leaveRequests = data.map(leave => ({
@@ -146,7 +146,7 @@ export class MyLeaveComponent implements OnInit {
   cancelLeaveRequest(id: number): void {
     const email = this.authService.getLoggedInUserEmail();
     if (confirm('Cancel this leave request?')) {
-      this.http.delete(`http://localhost:3000/api/leave-requests-del?emailId=${email}&id=${id}`)
+      this.http.delete(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/leave-requests-del?emailId=${email}&id=${id}`)
         .subscribe({
           next: () => this.fetchLeaveRequests(),
           error: err => console.error('Cancel failed:', err)

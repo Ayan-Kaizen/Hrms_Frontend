@@ -99,7 +99,7 @@ onSubmit(): void {
   const email = this.f['email'].value;
   const password = this.f['password'].value;
 
-  this.http.post<any>('http://localhost:3000/api/login', { email, password }).subscribe({
+  this.http.post<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/login', { email, password }).subscribe({
     next: (res) => {
       if (res.success) {
         this.authService.setUser({

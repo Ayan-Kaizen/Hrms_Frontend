@@ -90,7 +90,7 @@ export class ProfileComponent implements OnInit {
 
     const email = loggedUser.email;
 
-    this.http.get(`http://localhost:3000/api/user/profile?email=${encodeURIComponent(email)}`).subscribe(
+    this.http.get(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/user/profile?email=${encodeURIComponent(email)}`).subscribe(
       (response: any) => {
         this.userDetails = response;
         if (this.userDetails) {
@@ -185,7 +185,7 @@ export class ProfileComponent implements OnInit {
       Array.from(this.experiencePdfs).forEach(file => formData.append('experienceDocs', file, file.name));
     }
 
-    this.http.post('http://localhost:3000/api/profile', formData).subscribe(
+    this.http.post('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/profile', formData).subscribe(
       (response) => {
         console.log('✅ Profile submitted successfully:', response);
         this.formSubmitted = true;
@@ -347,7 +347,7 @@ export class ProfileComponent implements OnInit {
 
     // Check if any files are selected for update
     if (formData.has('aadharPdf') || formData.has('panPdf') || formData.has('salarySlips') || formData.has('educationDocs') || formData.has('experienceDocs')) {
-      this.http.post('http://localhost:3000/api/profile/update-documents', formData).subscribe(
+      this.http.post('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/profile/update-documents', formData).subscribe(
         (response) => {
           console.log('✅ Documents updated successfully:', response);
           alert('Documents updated successfully!');

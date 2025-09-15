@@ -78,7 +78,7 @@ constructor(
   }
 
   loadApprovedLeaveRequests(): void {
-    this.http.get<{ leaveRequests: LeaveRequest[] }>('http://localhost:3000/api/get-approved-leaves')
+    this.http.get<{ leaveRequests: LeaveRequest[] }>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/get-approved-leaves')
       .subscribe({
         next: (response) => {
           this.leaveRequests = response.leaveRequests;
@@ -91,7 +91,7 @@ constructor(
   }
 
   updateLeaveStatus(leaveId: number, status: string): void {
-    this.http.post<LeaveStatusResponse>('http://localhost:3000/api/update-leave-status', { leaveId, status })
+    this.http.post<LeaveStatusResponse>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/update-leave-status', { leaveId, status })
       .subscribe({
         next: (response) => {
           alert(response.message);

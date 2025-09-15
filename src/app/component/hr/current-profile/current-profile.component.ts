@@ -51,7 +51,7 @@ export class CurrentProfileComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    this.http.get(`http://localhost:3000/api/employee-profiles/email/${email}`)
+    this.http.get(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/employee-profiles/email/${email}`)
       .subscribe({
         next: async (res: any) => {
           console.log('API response:', res);

@@ -45,7 +45,7 @@ isPauseDisabled: boolean = false;
 
   //  Fetch all employee profiles
 getEmployeeProfiles() {
-  this.http.get<any[]>('http://localhost:3000/api/users').subscribe({
+  this.http.get<any[]>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/users').subscribe({
     next: (res) => {
       console.log('API Response:', res);
       // Ensure each user has status and isUpdating properties
@@ -79,7 +79,7 @@ filteredProfiles() {
   //  Delete employee by email
   deleteProfile(email: string): void {
     if (confirm('Are you sure you want to delete this user?')) {
-      this.http.delete(`http://localhost:3000/api/users/${email}`).subscribe({
+      this.http.delete(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/users/${email}`).subscribe({
         next: () => {
           this.employeeProfiles = this.employeeProfiles.filter(emp => emp.email !== email);
           alert('User deleted successfully');
@@ -112,7 +112,7 @@ toggleUserSession(email: string, currentStatus: string): void {
 
   const body = { email, status: newStatus };
 
-  this.http.post('http://localhost:3000/api/update-session-status', body).subscribe({
+  this.http.post('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/update-session-status', body).subscribe({
     next: (response: any) => {
       console.log(`Session ${action}d:`, response.message);
       

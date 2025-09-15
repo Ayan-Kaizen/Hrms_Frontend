@@ -398,7 +398,7 @@ export class AssetManagementComponent implements OnInit {
     }
 
     this.http.get<{ success: boolean; data: GroupedActivityLog[]; grouped: boolean }>
-      ('http://localhost:3000/api/hr/activity-logs', { params })
+      ('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/hr/activity-logs', { params })
       .subscribe({
         next: (response) => {
           if (response.success) {
@@ -584,7 +584,7 @@ export class AssetManagementComponent implements OnInit {
       params = params.set('status', status);
     }
 
-    this.http.get<{ success: boolean; data: Ticket[] }>('http://localhost:3000/api/hr/tickets', { params })
+    this.http.get<{ success: boolean; data: Ticket[] }>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/hr/tickets', { params })
       .subscribe({
         next: (response) => {
           if (response.success) {
@@ -616,7 +616,7 @@ export class AssetManagementComponent implements OnInit {
 
   // Load ticket statistics
   loadTicketStatistics(): void {
-    this.http.get<{ success: boolean; data: any }>('http://localhost:3000/api/hr/ticket-stats')
+    this.http.get<{ success: boolean; data: any }>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/hr/ticket-stats')
       .subscribe({
         next: (response) => {
           if (response.success) {
@@ -681,7 +681,7 @@ openTicketAction(ticket: Ticket): void {
       return;
     }
 
-    this.http.put(`http://localhost:3000/api/hr/tickets/${this.selectedTicket.ticket_id}`, updateData)
+    this.http.put(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/hr/tickets/${this.selectedTicket.ticket_id}`, updateData)
       .subscribe({
         next: (response: any) => {
           if (response.success) {
@@ -827,7 +827,7 @@ openTicketAction(ticket: Ticket): void {
   loadAssets(): void {
     this.isLoading = true;
     
-    this.http.get<any>('http://localhost:3000/api/assets')
+    this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/assets')
       .subscribe({
         next: (response) => {
           if (response.success && response.data) {
@@ -891,7 +891,7 @@ openTicketAction(ticket: Ticket): void {
   }
 
   loadVendors(): void {
-    this.http.get<{ success: boolean; data: any[] }>('http://localhost:3000/api/vendors')
+    this.http.get<{ success: boolean; data: any[] }>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/vendors')
       .subscribe({
         next: (response) => {
           if (response.success && response.data) {
@@ -935,7 +935,7 @@ openTicketAction(ticket: Ticket): void {
       return;
     }
     
-    this.http.get<any>('http://localhost:3000/api/employees/by-group', {
+    this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/employees/by-group', {
       params: new HttpParams().set('grp_id', departmentId)
     }).subscribe({
       next: (resp) => {
@@ -987,7 +987,7 @@ openTicketAction(ticket: Ticket): void {
     this.allocationReason = '';
     this.showAssetModal = true;
 
-    this.http.get<any>('http://localhost:3000/api/assets/next-id')
+    this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/assets/next-id')
       .subscribe({
         next: (resp) => {
           if (resp?.success && resp?.data?.nextId) {
@@ -1002,7 +1002,7 @@ openTicketAction(ticket: Ticket): void {
         }
       });
 
-    this.http.get<any>('http://localhost:3000/api/departments')
+    this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/departments')
       .subscribe({
         next: (resp) => {
           if (resp?.success && Array.isArray(resp.data)) {
@@ -1093,7 +1093,7 @@ openTicketAction(ticket: Ticket): void {
       });
       
       if (this.editingAsset) {
-        this.http.put(`http://localhost:3000/api/assets/${this.editingAsset.assetId}`, apiPayload)
+        this.http.put(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/assets/${this.editingAsset.assetId}`, apiPayload)
           .subscribe({
             next: (response: any) => {
               if (response.success) {
@@ -1117,7 +1117,7 @@ openTicketAction(ticket: Ticket): void {
             }
           });
       } else {
-        this.http.post('http://localhost:3000/api/assets', apiPayload)
+        this.http.post('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/assets', apiPayload)
           .subscribe({
             next: (response: any) => {
               if (response.success) {
@@ -1159,7 +1159,7 @@ openTicketAction(ticket: Ticket): void {
 
   deleteAsset(asset: Asset): void {
     if (confirm(`Are you sure you want to delete asset ${asset.serialNumber}?`)) {
-      this.http.delete(`http://localhost:3000/api/assets/${asset.assetId || asset.serialNumber}`)
+      this.http.delete(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/assets/${asset.assetId || asset.serialNumber}`)
         .subscribe({
           next: (response: any) => {
             if (response.success) {
@@ -1210,7 +1210,7 @@ openTicketAction(ticket: Ticket): void {
       };
       
       if (this.editingVendor) {
-        this.http.put(`http://localhost:3000/api/vendors/${this.editingVendor.id}`, apiPayload)
+        this.http.put(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/vendors/${this.editingVendor.id}`, apiPayload)
           .subscribe({
             next: (response: any) => {
               if (response.success) {
@@ -1227,7 +1227,7 @@ openTicketAction(ticket: Ticket): void {
             }
           });
       } else {
-        this.http.post('http://localhost:3000/api/vendors', apiPayload)
+        this.http.post('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/vendors', apiPayload)
           .subscribe({
             next: (response: any) => {
               if (response.success) {
@@ -1254,7 +1254,7 @@ openTicketAction(ticket: Ticket): void {
 
   deleteVendor(vendor: Vendor): void {
     if (confirm(`Are you sure you want to delete vendor ${vendor.name}?`)) {
-      this.http.delete(`http://localhost:3000/api/vendors/${vendor.id}`)
+      this.http.delete(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/vendors/${vendor.id}`)
         .subscribe({
           next: (response: any) => {
             if (response.success) {
