@@ -12,7 +12,7 @@ import { DatePipe } from '@angular/common';
 })
 export class MyLeaveComponent implements OnInit {
 
-  today: string = ''; // 👈 used to prevent past date selection
+  today: string = ''; 
   isSidebarMinimized = false;
   isLeaveModalOpen = false;
   remainingLeaves = 0;
