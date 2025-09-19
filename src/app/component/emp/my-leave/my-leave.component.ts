@@ -10,6 +10,7 @@ import { DatePipe } from '@angular/common';
   styleUrls: ['./my-leave.component.css'],
   providers: [DatePipe]
 })
+
 export class MyLeaveComponent implements OnInit {
 
   today: string = ''; 
@@ -46,7 +47,7 @@ export class MyLeaveComponent implements OnInit {
 
     this.user = user;
     this.leaveRequest.emailId = user.email;
-    this.today = this.datePipe.transform(new Date(), 'yyyy-MM-dd')!; // ✅ Set current date
+    this.today = this.datePipe.transform(new Date(), 'yyyy-MM-dd')!; 
     this.fetchLeaveRequests();
   }
 
@@ -119,6 +120,7 @@ export class MyLeaveComponent implements OnInit {
           }
         });
       },
+      
       error: err => {
         console.error('Error submitting leave:', err);
         alert('Failed to submit leave request.');
@@ -159,3 +161,5 @@ export class MyLeaveComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 }
+
+

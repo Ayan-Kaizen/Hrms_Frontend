@@ -47,6 +47,7 @@ export interface Asset {
   model: string;
   status: string;
   allocatedTo?: string;
+  allocatedToOffice?: string;
   vendor: string;
   vendorEmail?: string;
   vendorContact?: string;
@@ -156,8 +157,8 @@ export class AssetManagementComponent implements OnInit {
   assetDataSource: MatTableDataSource<Asset>;
 
   assetDisplayedColumns: string[] = [
-    'assetId', 'serialNumber', 'name', 'type', 'brandModel', 'status', 
-    'allocatedTo', 'vendor', 'vendorContact', 'warrantyExpiry', 
+    'index', 'assetId', 'serialNumber', 'name', 'type', 'brandModel', 'status', 
+    'allocatedTo', 'allocatedToOffice', 'vendor', 'vendorContact', 'warrantyExpiry', 
     'createdAt', 'reason', 'actions' 
   ];
   
@@ -300,6 +301,7 @@ export class AssetManagementComponent implements OnInit {
       model: ['', Validators.required],
       status: ['Available', Validators.required],
       allocatedTo: [''],
+      allocatedToOffice: [''],
       vendor: ['', Validators.required],
       vendorEmail: ['', [Validators.required, Validators.email]],
       vendorContact: ['', Validators.required],
@@ -325,6 +327,7 @@ export class AssetManagementComponent implements OnInit {
       model: ['', Validators.required],
       status: ['Available', Validators.required],
       allocatedTo: [''],
+      allocatedToOffice: [''],
       vendor: ['', Validators.required],
       vendorEmail: ['', [Validators.required, Validators.email]],
       vendorContact: ['', Validators.required],
@@ -774,6 +777,7 @@ openTicketAction(ticket: Ticket): void {
       model: apiAsset.model,
       status: apiAsset.status,
       allocatedTo: apiAsset.allocated_to,
+      allocatedToOffice: apiAsset.allocated_to_office,
       vendor: apiAsset.vendor,
       vendorEmail: apiAsset.vendor_email,
       vendorContact: apiAsset.vendor_contact,
@@ -862,6 +866,7 @@ openTicketAction(ticket: Ticket): void {
         model: 'M1 2021', 
         status: 'Allocated', 
         allocatedTo: 'Raj Sharma', 
+        allocatedToOffice: 'Building A, Floor 2',
         vendor: 'Tech Suppliers Inc.', 
         vendorEmail: 'contact@techsuppliers.com', 
         vendorContact: 'John Doe', 
@@ -875,6 +880,7 @@ openTicketAction(ticket: Ticket): void {
         model: 'U2720Q', 
         status: 'Available', 
         allocatedTo: '', 
+        allocatedToOffice: '',
         vendor: 'Hardware Solutions', 
         vendorEmail: 'sales@hardwaresolutions.com', 
         vendorContact: 'Jane Smith', 
@@ -1028,7 +1034,8 @@ openTicketAction(ticket: Ticket): void {
       brand: asset.brand,
       model: asset.model,
       status: asset.status,
-      allocatedTo: asset.allocatedTo,
+      allocatedTo: asset.allocatedTo || '',
+      allocatedToOffice: asset.allocatedToOffice || '',
       vendor: asset.vendor,
       vendorEmail: asset.vendorEmail,
       vendorContact: asset.vendorContact,
@@ -1074,6 +1081,7 @@ openTicketAction(ticket: Ticket): void {
         model: formValue.model,
         status: formValue.status,
         allocated_to: formValue.allocatedTo || null,
+        allocated_to_office: formValue.allocatedToOffice || null,
         vendor: formValue.vendor,
         vendor_email: formValue.vendorEmail,
         vendor_contact: formValue.vendorContact,
@@ -1312,8 +1320,3 @@ openTicketAction(ticket: Ticket): void {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   }
 }
-
-
-
-
-
