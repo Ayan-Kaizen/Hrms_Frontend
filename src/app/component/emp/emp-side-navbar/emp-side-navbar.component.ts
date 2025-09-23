@@ -65,11 +65,16 @@ export class EmpSideNavbarComponent implements OnInit {
       icon: 'M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z'
     },
     {
-      label: 'My Leave',
+      label: 'Leaves',
       route: '/my-leaves',
       icon: 'M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z'
     },
     {
+      label: 'Assets',
+      route: '/asset-management-emp',
+      icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2zm3 3a1 1 0 011-1h1a1 1 0 010 2H7a1 1 0 01-1-1zm4-1a1 1 0 000 2h4a1 1 0 100-2h-4z'
+    },
+     {
       label: 'Asset Management',
       route: '/asset-management-emp',
       icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2zm3 3a1 1 0 011-1h1a1 1 0 010 2H7a1 1 0 01-1-1zm4-1a1 1 0 000 2h4a1 1 0 100-2h-4z'

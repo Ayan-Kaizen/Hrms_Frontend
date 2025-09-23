@@ -1,0 +1,52 @@
+<div class="flex min-h-screen bg-gray-50">
+  <!-- Sidebar -->
+  <app-hr-side-navbar
+    [isMinimized]="isSidebarMinimized"
+    (toggleMinimized)="onSidebarToggle($event)">
+  </app-hr-side-navbar>
+
+  <!-- Main Content -->
+  <div class="flex-1 p-6">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-6">
+      <div class="text-2xl font-semibold text-blue-600">HR Dashboard</div>
+    </header>
+
+    <!-- Tiles -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div
+        class="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition cursor-pointer text-center"
+        routerLink="/hr-profile">
+        <h3 class="text-lg font-semibold text-blue-700">👤 My Profile</h3>
+        <p class="text-gray-600 mt-2">View and update your HR profile</p>
+      </div>
+
+      <div
+        class="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition cursor-pointer text-center"
+        routerLink="/my-leaves-hr">
+        <h3 class="text-lg font-semibold text-blue-700">📅 My Leaves</h3>
+        <p class="text-gray-600 mt-2">Check and manage your leave requests</p>
+      </div>
+
+      <div
+        class="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition cursor-pointer text-center"
+        routerLink="/my-assets-hr">
+        <h3 class="text-lg font-semibold text-blue-700">💻 My Assets</h3>
+        <p class="text-gray-600 mt-2">Track company assets allocated to you</p>
+      </div>
+    </div>
+
+    <!-- Profile Form / Display -->
+    <ng-container *ngIf="!formSubmitted && !userDetails">
+      <!-- Insert your existing profile form here -->
+    </ng-container>
+
+    <ng-container *ngIf="userDetails && !formSubmitted">
+      <!-- Insert your existing profile display here -->
+    </ng-container>
+
+    <ng-container *ngIf="formSubmitted">
+      <!-- Insert your success message here -->
+    </ng-container>
+  </div>
+</div>

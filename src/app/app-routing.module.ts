@@ -35,6 +35,10 @@ import { PayrollManagementComponent } from './component/payroll-management/payro
 import { OverallPerformanceComponent } from './component/overall-performance/overall-performance.component';
 import { RecruitmentComponent } from './component/recruitment/recruitment.component';
 import { WorkTrackReportsComponent } from './component/work-track-reports/work-track-reports.component';
+import {MyProfileHrComponent} from './component/hr/my-profile-hr/my-profile-hr.component';
+import { MyLeavesHrComponent } from './component/hr/my-leaves-hr/my-leaves-hr.component'; 
+import { MyAssetsHrComponent } from './component/hr/my-assets-hr/my-assets-hr.component';
+
 
 const routes: Routes = [
   // Default route
@@ -54,7 +58,8 @@ const routes: Routes = [
   { path: 'asset-management-emp', component: AssetManagementEmpComponent, canActivate: [AuthGuard]},
 
   // HR routes
-
+{ path: 'my-assets-hr', component: MyAssetsHrComponent, canActivate: [AuthGuard, RoleGuard] },
+{ path: 'my-leaves-hr', component: MyLeavesHrComponent, canActivate: [AuthGuard, RoleGuard] },
 { path: 'hr-dashboard', component: HrDashboardComponent, canActivate: [AuthGuard, RoleGuard] },
 { path: 'leave-attendance', component: LeaveAttendanceComponent, canActivate: [AuthGuard, RoleGuard] },
 { path: 'hr-notice', component: HrNoticeComponent, canActivate: [AuthGuard, RoleGuard] },
@@ -66,7 +71,7 @@ const routes: Routes = [
 { path: 'view-cred', component: ViewCredComponent, canActivate: [AuthGuard, RoleGuard] },
 { path: 'hr-profile', component: HrProfileComponent, canActivate: [AuthGuard, RoleGuard] },
 { path: 'asset-management-hr', component: AssetManagementComponent, canActivate: [AuthGuard, RoleGuard]},
-
+{ path: 'my-profile-hr', component: MyProfileHrComponent, canActivate: [AuthGuard, RoleGuard]},
   // Admin routes
   { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard] },
   { path: 'payroll-management', component: PayrollManagementComponent, canActivate: [AuthGuard] },

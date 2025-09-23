@@ -111,7 +111,7 @@ onSubmit(): void {
 
         // redirect based on grp_id
         if (res.user.grp_id === 2) {
-          this.router.navigate(['/hr-profile']);
+          this.router.navigate(['/my-profile-hr']);
         } else {
           this.router.navigate(['/profile']);
         }

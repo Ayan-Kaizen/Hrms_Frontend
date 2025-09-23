@@ -27,13 +27,19 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MyProfileHrComponent } from './my-profile-hr/my-profile-hr.component';
+import { MyLeavesHrComponent } from './my-leaves-hr/my-leaves-hr.component';
+import { MyAssetsHrComponent } from './my-assets-hr/my-assets-hr.component';
 
 
 @NgModule({
   declarations: [
     HrDashboardComponent,
     HrSideNavbarComponent,
-    AssetManagementComponent ,
+    AssetManagementComponent,
+    MyProfileHrComponent,
+    MyLeavesHrComponent,
+    MyAssetsHrComponent ,
   ],
 
   imports: [

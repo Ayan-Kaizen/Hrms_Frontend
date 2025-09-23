@@ -46,7 +46,7 @@ import { ViewCredComponent } from './component/hr/view-cred/view-cred.component'
 import { HrProfileComponent } from './component/hr/hr-profile/hr-profile.component';
 import { EmpSideNavbarComponent } from './component/emp/emp-side-navbar/emp-side-navbar.component';
 import { HrModule } from './component/hr/hr.module';
-
+import {MyProfileHrComponent} from './component/hr/my-profile-hr/my-profile-hr.component';
 
 import { MatIconModule } from '@angular/material/icon';
 @NgModule({
@@ -102,6 +102,7 @@ import { MatIconModule } from '@angular/material/icon';
     CommonModule,
     HrModule,
     MatIconModule,
+    
   ],
   providers: [],
   bootstrap: [AppComponent],
