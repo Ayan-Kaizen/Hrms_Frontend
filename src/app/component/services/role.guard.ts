@@ -74,7 +74,7 @@ import { CanActivate, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class RoleGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
@@ -82,12 +82,24 @@ export class RoleGuard implements CanActivate {
   canActivate(): boolean {
     const user = this.authService.getUser();
 
-    if (user && user.grp_id === 2) {
-      return true; // HR user
+    if (!user) {
+      // No user found → go to login
+      this.router.navigate(['/login']);
+      return false;
     }
 
-    // Redirect if not HR
-    this.router.navigate(['/emp-dashboard']);
+    const isHR = user.grp_id === 2;
+    const isArjun = user.email?.toLowerCase().trim() === 'arjun@kaizenque.com';
+
+    if (isHR || isArjun) {
+      return true; // Allow access
+    }
+
+    // If not HR or not Arjun → deny access
+    this.router.navigate(['/login']); // Or redirect to unauthorized page
     return false;
   }
 }
+
+
+
