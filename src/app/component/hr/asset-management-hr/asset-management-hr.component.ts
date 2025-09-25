@@ -52,8 +52,6 @@ export interface Asset {
   vendorEmail?: string;
   vendorContact?: string;
   warrantyExpiry?: string;
-  purchaseDate?: string;
-  purchaseCost?: number;
   createdAt?: string;
   reason?: string;
 }
@@ -78,13 +76,12 @@ export interface AssetResponse {
   };
 }
 
-interface Ticket {
+export interface Ticket {
   ticket_id: string;
   asset_id: string;
   reported_by: string;
   issue_description: string;
   status: string;
-  priority: string;
   created_at: string;
   assigned_to?: string;
   resolution_notes?: string;
@@ -94,6 +91,7 @@ interface Ticket {
   employee_name?: string;
   employee_id?: string;
   evidence: Evidence[];
+  priority: 'Low' | 'Medium' | 'High';
 }
 
 interface ActivityLog {
@@ -189,7 +187,7 @@ export class AssetManagementComponent implements OnInit {
   // Ticket Management - Updated for real data
   tickets: Ticket[] = [];
   ticketDataSource: MatTableDataSource<Ticket>;
-  ticketDisplayedColumns: string[] = ['ticket_id', 'employee_id', 'employee_name', 'asset_id', 'asset_model', 'status', 'priority', 'issue_description', 'evidence', 'actions'];
+  ticketDisplayedColumns: string[] = ['ticket_id', 'employee_id', 'employee_name', 'asset_id', 'asset_model', 'status', 'issue_description', 'evidence', 'actions'];
   selectedTicket: Ticket | null = null;
   ticketResponse = '';
   informationRequest = '';
@@ -207,59 +205,8 @@ export class AssetManagementComponent implements OnInit {
   currentTicketFilter = 'all';
   isLoadingTickets = false;
   
-  // Activity Logs - Legacy (kept for backwards compatibility)
-  activityLogs: ActivityLogOld[] = [
-    { 
-      timestamp: new Date('2023-10-30T09:15:00'), 
-      message: 'Device allocated to Raj Sharma', 
-      user: 'Raj Sharma', 
-      device: 'MacBook Pro', 
-      issueType: 'Hardware Issue',
-      addedBy: 'HR'
-    },
-    { 
-      timestamp: new Date('2023-10-30T10:30:00'), 
-      message: 'Issue reported: Laptop not turning on', 
-      user: 'Raj Sharma', 
-      device: 'MacBook Pro', 
-      issueType: 'Hardware Issue',
-      addedBy: 'Employee'
-    },
-    { 
-      timestamp: new Date('2023-10-30T11:45:00'), 
-      message: 'Technician assigned to ticket', 
-      user: 'Raj Sharma', 
-      device: 'MacBook Pro', 
-      issueType: 'Hardware Issue',
-      addedBy: 'HR'
-    },
-    { 
-      timestamp: new Date('2023-10-30T14:20:00'), 
-      message: 'Device repaired and returned', 
-      user: 'Raj Sharma', 
-      device: 'MacBook Pro', 
-      issueType: 'Hardware Issue',
-      addedBy: 'HR'
-    },
-    { 
-      timestamp: new Date('2023-10-29T08:30:00'), 
-      message: 'New monitor requested', 
-      user: 'Priya Patel', 
-      device: 'Dell Monitor', 
-      issueType: 'Display Issue',
-      addedBy: 'Employee'
-    },
-    { 
-      timestamp: new Date('2023-10-29T09:45:00'), 
-      message: 'Monitor replacement approved', 
-      user: 'Priya Patel', 
-      device: 'Dell Monitor', 
-      issueType: 'Display Issue',
-      addedBy: 'HR'
-    }
-  ];
-
-  // New Activity Logs Properties
+  // Activity Logs
+  activityLogs: ActivityLogOld[] = [];
   newActivityLogs: ActivityLog[] = [];
   groupedActivityLogs: GroupedActivityLog[] = [];
   isLoadingActivityLogs = false;
@@ -291,7 +238,7 @@ export class AssetManagementComponent implements OnInit {
       address: ['']
     });
     
-    // Initialize asset form
+    // Initialize asset form - REMOVED purchase_date and purchase_cost
     this.assetForm = this.fb.group({
       assetId: ['', Validators.required],
       serialNumber: ['', Validators.required],
@@ -305,9 +252,7 @@ export class AssetManagementComponent implements OnInit {
       vendor: ['', Validators.required],
       vendorEmail: ['', [Validators.required, Validators.email]],
       vendorContact: ['', Validators.required],
-      warrantyExpiry: [''],
-      purchaseDate: [''],
-      purchaseCost: ['']
+      warrantyExpiry: ['']
     });
     
     // Initialize data sources
@@ -317,31 +262,12 @@ export class AssetManagementComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Initialize asset form
-    this.assetForm = this.fb.group({
-      assetId: ['', Validators.required],
-      serialNumber: ['', Validators.required],
-      name: ['', Validators.required],
-      type: ['', Validators.required],
-      brand: ['', Validators.required],
-      model: ['', Validators.required],
-      status: ['Available', Validators.required],
-      allocatedTo: [''],
-      allocatedToOffice: [''],
-      vendor: ['', Validators.required],
-      vendorEmail: ['', [Validators.required, Validators.email]],
-      vendorContact: ['', Validators.required],
-      warrantyExpiry: [''],
-      purchaseDate: [''],
-      purchaseCost: ['']
-    });
-
     this.loadAssets();
     this.loadVendors();
     this.loadTickets();
     this.loadTicketStatistics();
     this.setupFilterSubscriptions();
-    this.loadActivityLogs(); // Load activity logs on init
+    this.loadActivityLogs();
   }
 
   ngAfterViewInit() {
@@ -370,11 +296,30 @@ export class AssetManagementComponent implements OnInit {
     this.isSidebarMinimized = isMinimized;
   }
 
+  // ==================== STATUS CHANGE HANDLER ====================
+  onStatusChange(event: any): void {
+    const status = event.target.value;
+    
+    // Enable/disable controls based on status
+    if (status === 'Allocated') {
+      this.assetForm.get('allocatedTo')?.enable();
+      this.assetForm.get('allocatedToOffice')?.enable();
+      // Load departments when status changes to Allocated
+      this.loadDepartments();
+    } else {
+      this.assetForm.get('allocatedTo')?.disable();
+      this.assetForm.get('allocatedToOffice')?.disable();
+      // Clear values when disabled
+      this.assetForm.patchValue({
+        allocatedTo: '',
+        allocatedToOffice: ''
+      });
+      this.filteredEmployees = [];
+    }
+  }
+
   // ==================== ACTIVITY LOGS METHODS ====================
 
-  /**
-   * Load activity logs with current filters and pagination
-   */
   loadActivityLogs(): void {
     this.isLoadingActivityLogs = true;
     
@@ -383,7 +328,6 @@ export class AssetManagementComponent implements OnInit {
       .set('limit', this.activityPageSize.toString())
       .set('group_by', 'employee');
 
-    // Apply filters
     if (this.activityLogFilters.employeeName.trim()) {
       params = params.set('employee_name', this.activityLogFilters.employeeName.trim());
     }
@@ -408,7 +352,6 @@ export class AssetManagementComponent implements OnInit {
             if (response.grouped) {
               this.groupedActivityLogs = response.data;
             } else {
-              // If not grouped, group them manually (fallback)
               this.groupedActivityLogs = this.groupActivitiesByEmployee(response.data as any);
             }
             console.log('Activity logs loaded:', this.groupedActivityLogs);
@@ -426,9 +369,6 @@ export class AssetManagementComponent implements OnInit {
       });
   }
 
-  /**
-   * Group activities by employee (fallback method)
-   */
   private groupActivitiesByEmployee(activities: ActivityLog[]): GroupedActivityLog[] {
     const grouped: { [key: string]: GroupedActivityLog } = {};
     
@@ -447,7 +387,6 @@ export class AssetManagementComponent implements OnInit {
       grouped[key].activities.push(activity);
     });
 
-    // Sort activities within each group by date (most recent first)
     Object.values(grouped).forEach(group => {
       group.activities.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     });
@@ -455,22 +394,13 @@ export class AssetManagementComponent implements OnInit {
     return Object.values(grouped);
   }
 
-  /**
-   * Handle filter changes with debouncing
-   */
   onFilterChange(): void {
-    // Reset to first page when filters change
     this.currentActivityPage = 1;
-    
-    // Debounce the filter changes
     setTimeout(() => {
       this.loadActivityLogs();
     }, 300);
   }
 
-  /**
-   * Clear all filters
-   */
   clearFilters(): void {
     this.activityLogFilters = {
       employeeName: '',
@@ -482,9 +412,6 @@ export class AssetManagementComponent implements OnInit {
     this.loadActivityLogs();
   }
 
-  /**
-   * Load next page of activity logs
-   */
   loadNextActivityPage(): void {
     if (this.currentActivityPage < this.totalActivityPages) {
       this.currentActivityPage++;
@@ -492,9 +419,6 @@ export class AssetManagementComponent implements OnInit {
     }
   }
 
-  /**
-   * Load previous page of activity logs
-   */
   loadPreviousActivityPage(): void {
     if (this.currentActivityPage > 1) {
       this.currentActivityPage--;
@@ -502,9 +426,6 @@ export class AssetManagementComponent implements OnInit {
     }
   }
 
-  /**
-   * Toggle additional data visibility for an activity
-   */
   toggleAdditionalData(activityId: number): void {
     if (this.expandedActivityIds.has(activityId)) {
       this.expandedActivityIds.delete(activityId);
@@ -513,9 +434,6 @@ export class AssetManagementComponent implements OnInit {
     }
   }
 
-  /**
-   * Format additional data for display
-   */
   formatAdditionalData(additionalData: any): string {
     if (!additionalData) return '';
     
@@ -529,39 +447,17 @@ export class AssetManagementComponent implements OnInit {
     }
   }
 
-  /**
-   * Get employee initials for avatar
-   */
- getEmployeeInitials(name: string | undefined): string {
-  if (!name) return 'N/A';
-  
-  return name
-    .split(' ')
-    .map(part => part.charAt(0))
-    .join('')
-    .toUpperCase()
-    .substring(0, 2);
-}
-
-  /**
-   * Get action type display name
-   */
-  getActionTypeDisplayName(actionType: string): string {
-    const actionTypeMap: { [key: string]: string } = {
-      'asset_allocated': 'Asset Allocated',
-      'ticket_raised': 'Ticket Raised',
-      'ticket_responded': 'HR Responded',
-      'asset_returned': 'Asset Returned',
-      'asset_updated': 'Asset Updated',
-      'ticket_updated': 'Ticket Updated'
-    };
+  getEmployeeInitials(name: string | undefined): string {
+    if (!name) return 'N/A';
     
-    return actionTypeMap[actionType] || actionType.replace('_', ' ').toUpperCase();
+    return name
+      .split(' ')
+      .map(part => part.charAt(0))
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
   }
 
-  /**
-   * Get action type color class
-   */
   getActionTypeColorClass(actionType: string): string {
     const colorMap: { [key: string]: string } = {
       'asset_allocated': 'bg-green-100 text-green-600',
@@ -577,7 +473,6 @@ export class AssetManagementComponent implements OnInit {
 
   // ==================== TICKET MANAGEMENT FUNCTIONS ====================
 
-  // Load tickets from API
   loadTickets(status: string = 'all'): void {
     this.isLoadingTickets = true;
     this.currentTicketFilter = status;
@@ -617,7 +512,6 @@ export class AssetManagementComponent implements OnInit {
       });
   }
 
-  // Load ticket statistics
   loadTicketStatistics(): void {
     this.http.get<{ success: boolean; data: any }>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/hr/ticket-stats')
       .subscribe({
@@ -638,7 +532,6 @@ export class AssetManagementComponent implements OnInit {
       });
   }
 
-  // Filter tickets by status
   filterTicketsByStatus(status: string): void {
     this.activeSection = 'tickets';
     
@@ -654,14 +547,12 @@ export class AssetManagementComponent implements OnInit {
     this.loadTickets(dbStatus);
   }
 
-  // Open ticket action modal
-openTicketAction(ticket: Ticket): void {
-  this.selectedTicket = { ...ticket };
-  this.ticketResponse = ticket.resolution_notes || '';
-  this.informationRequest = '';
-}
+  openTicketAction(ticket: Ticket): void {
+    this.selectedTicket = { ...ticket };
+    this.ticketResponse = ticket.resolution_notes || '';
+    this.informationRequest = '';
+  }
 
-  // Submit ticket action
   submitTicketAction(): void {
     if (!this.selectedTicket) return;
 
@@ -697,14 +588,11 @@ openTicketAction(ticket: Ticket): void {
             this.loadTicketStatistics();
             this.loadTickets(this.currentTicketFilter);
             
-            this.addToActivityLogs(this.selectedTicket!, updateData);
-            
             alert('Ticket updated successfully!');
             this.selectedTicket = null;
             this.ticketResponse = '';
             this.informationRequest = '';
 
-            // Refresh activity logs to show the new entry
             if (this.activeSection === 'logs') {
               setTimeout(() => {
                 this.loadActivityLogs();
@@ -721,72 +609,46 @@ openTicketAction(ticket: Ticket): void {
       });
   }
 
-  // Add ticket action to activity logs
-  addToActivityLogs(ticket: Ticket, updateData: any): void {
-    const now = new Date();
-    
-    if (updateData.hrResponse) {
-      this.activityLogs.unshift({
-        timestamp: now,
-        message: `HR Response: ${updateData.hrResponse}`,
-        user: ticket.employee_name || ticket.reported_by,
-        device: ticket.asset_name || ticket.asset_id,
-        issueType: 'Ticket Update',
-        addedBy: 'HR'
-      });
-    }
-    
-    if (updateData.informationRequest) {
-      this.activityLogs.unshift({
-        timestamp: now,
-        message: `Information Request: ${updateData.informationRequest}`,
-        user: ticket.employee_name || ticket.reported_by,
-        device: ticket.asset_name || ticket.asset_id,
-        issueType: 'Information Request',
-        addedBy: 'HR'
-      });
-    }
-    
-    if (updateData.status) {
-      this.activityLogs.unshift({
-        timestamp: now,
-        message: `Status updated to: ${updateData.status}`,
-        user: ticket.employee_name || ticket.reported_by,
-        device: ticket.asset_name || ticket.asset_id,
-        issueType: 'Status Update',
-        addedBy: 'HR'
-      });
-    }
-  }
-
-  // Open evidence modal
   openEvidenceModal(evidence: Evidence): void {
     this.selectedEvidence = evidence;
   }
 
-  // ==================== ASSET MANAGEMENT FUNCTIONS ====================
+  // Get evidence URL with proper formatting
+  getEvidenceUrl(filePath: string): string {
+    return `https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/uploads/${filePath}`;
+  }
+
+  // ==================== ASSET MANAGEMENT FUNCTIONS WITH DEBUG ====================
 
   private mapAssetFromAPI(apiAsset: any): Asset {
-    return {
+    console.log('=== MAPPING ASSET FROM API ===');
+    console.log('Input API asset:', apiAsset);
+    
+    const mapped = {
       id: apiAsset.id,
-      assetId: apiAsset.asset_id,
+      assetId: apiAsset.asset_id,  // This should be the real asset ID
       serialNumber: apiAsset.serial_no,
       name: apiAsset.name,
       type: apiAsset.type,
       brand: apiAsset.brand,
       model: apiAsset.model,
       status: apiAsset.status,
-      allocatedTo: apiAsset.allocated_to,
+      allocatedTo: apiAsset.allocated_to,  // This should be employee ID
       allocatedToOffice: apiAsset.allocated_to_office,
       vendor: apiAsset.vendor,
       vendorEmail: apiAsset.vendor_email,
       vendorContact: apiAsset.vendor_contact,
       warrantyExpiry: apiAsset.warranty_expiry,
-      purchaseDate: apiAsset.purchase_date,
-      purchaseCost: apiAsset.purchase_cost,
       createdAt: apiAsset.created_at,
       reason: apiAsset.reason || apiAsset.notes
     };
+    
+    console.log('Mapped result:', mapped);
+    console.log('Asset ID mapped to:', mapped.assetId);
+    console.log('Allocated to employee:', mapped.allocatedTo);
+    console.log('============================');
+    
+    return mapped;
   }
 
   applyFilters(): void {
@@ -834,8 +696,23 @@ openTicketAction(ticket: Ticket): void {
     this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/assets')
       .subscribe({
         next: (response) => {
+          console.log('=== LOAD ASSETS DEBUG ===');
+          console.log('Raw API response:', response);
+          
           if (response.success && response.data) {
-            this.assets = response.data.map((asset: any) => this.mapAssetFromAPI(asset));
+            console.log('First raw asset from API:', response.data[0]);
+            
+            this.assets = response.data.map((asset: any) => {
+              const mapped = this.mapAssetFromAPI(asset);
+              console.log('Original API asset:', asset);
+              console.log('Mapped asset:', mapped);
+              return mapped;
+            });
+            
+            console.log('First processed asset:', this.assets[0]);
+            console.log('All processed assets:', this.assets);
+            console.log('========================');
+            
             this.assetDataSource.data = this.assets;
             this.totalAssets = response.pagination?.total || this.assets.length;
             
@@ -866,7 +743,7 @@ openTicketAction(ticket: Ticket): void {
         model: 'M1 2021', 
         status: 'Allocated', 
         allocatedTo: 'Raj Sharma', 
-        allocatedToOffice: 'Building A, Floor 2',
+        allocatedToOffice: 'yes',
         vendor: 'Tech Suppliers Inc.', 
         vendorEmail: 'contact@techsuppliers.com', 
         vendorContact: 'John Doe', 
@@ -932,34 +809,86 @@ openTicketAction(ticket: Ticket): void {
     this.vendorOptions = ['', ...this.vendorList.map(v => v.name)];
   }
 
-  onDepartmentChange(event: any): void {
-    const departmentId = event.target.value;
-    this.filteredEmployees = [];
-    
-    if (!departmentId) {
-      this.assetForm.get('allocatedTo')?.setValue('');
-      return;
-    }
-    
-    this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/employees/by-group', {
-      params: new HttpParams().set('grp_id', departmentId)
-    }).subscribe({
-      next: (resp) => {
-        if (resp?.success && Array.isArray(resp.data)) {
-          this.filteredEmployees = resp.data;
-        } else {
-          this.filteredEmployees = [];
+  // Load departments
+  loadDepartments(): void {
+    this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/departments')
+      .subscribe({
+        next: (resp) => {
+          if (resp?.success && Array.isArray(resp.data)) {
+            this.departmentOptions = resp.data;
+          } else {
+            this.departmentOptions = [];
+          }
+        },
+        error: (error) => {
+          console.error('Error loading departments:', error);
+          this.departmentOptions = [];
         }
-        this.assetForm.get('allocatedTo')?.setValue('');
-      },
-      error: (error) => {
-        console.error('Error fetching employees:', error);
-        this.filteredEmployees = [];
-        this.assetForm.get('allocatedTo')?.setValue('');
-      }
-    });
+      });
   }
 
+  onDepartmentChange(event: any): void {
+  const departmentId = event.target.value;
+  this.filteredEmployees = [];
+  
+  if (!departmentId) {
+    this.assetForm.get('allocatedTo')?.setValue('');
+    return;
+  }
+  
+  // IMPORTANT: Store the current asset ID before making API call
+  const currentAssetId = this.assetForm.get('assetId')?.value;
+  console.log('Storing current asset ID before employee fetch:', currentAssetId);
+  
+  this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/employees/by-group', {
+    params: new HttpParams().set('grp_id', departmentId)
+  }).subscribe({
+    next: (resp) => {
+      if (resp?.success && Array.isArray(resp.data)) {
+        this.filteredEmployees = resp.data;
+        console.log('Loaded employees:', this.filteredEmployees);
+      } else {
+        this.filteredEmployees = [];
+      }
+      
+      // Clear employee selection but PRESERVE asset ID
+      this.assetForm.get('allocatedTo')?.setValue('');
+      
+      // CRITICAL: Ensure asset ID is not overwritten
+      if (currentAssetId) {
+        this.assetForm.get('assetId')?.setValue(currentAssetId);
+        console.log('Restored asset ID after employee fetch:', currentAssetId);
+      }
+    },
+    error: (error) => {
+      console.error('Error fetching employees:', error);
+      this.filteredEmployees = [];
+      this.assetForm.get('allocatedTo')?.setValue('');
+      
+      // CRITICAL: Restore asset ID even on error
+      if (currentAssetId) {
+        this.assetForm.get('assetId')?.setValue(currentAssetId);
+      }
+    }
+  });
+}
+onEmployeeChange(event: any): void {
+  const employeeId = event.target.value;
+  
+  // IMPORTANT: Store the current asset ID 
+  const currentAssetId = this.assetForm.get('assetId')?.value;
+  console.log('Employee selected:', employeeId);
+  console.log('Current asset ID before employee change:', currentAssetId);
+  
+  // Set the employee
+  this.assetForm.get('allocatedTo')?.setValue(employeeId);
+  
+  // CRITICAL: Ensure asset ID remains unchanged
+  if (currentAssetId) {
+    this.assetForm.get('assetId')?.setValue(currentAssetId);
+    console.log('Asset ID preserved after employee selection:', currentAssetId);
+  }
+}
   onVendorChange(event: any): void {
     const vendorName = event.target.value;
     if (vendorName) {
@@ -993,6 +922,11 @@ openTicketAction(ticket: Ticket): void {
     this.allocationReason = '';
     this.showAssetModal = true;
 
+    // Disable allocation fields initially
+    this.assetForm.get('allocatedTo')?.disable();
+    this.assetForm.get('allocatedToOffice')?.disable();
+
+    // Get next asset ID
     this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/assets/next-id')
       .subscribe({
         next: (resp) => {
@@ -1007,42 +941,60 @@ openTicketAction(ticket: Ticket): void {
           this.nextAssetId = null;
         }
       });
-
-    this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/departments')
-      .subscribe({
-        next: (resp) => {
-          if (resp?.success && Array.isArray(resp.data)) {
-            this.departmentOptions = resp.data;
-          } else {
-            this.departmentOptions = [];
-          }
-        },
-        error: () => {
-          this.departmentOptions = [];
-        }
-      });
   }
 
   editAsset(asset: Asset): void {
+    console.log('=== EDITING ASSET DEBUG ===');
+    console.log('Full asset object:', asset);
+    console.log('Asset ID should be:', asset.assetId);
+    console.log('Asset Serial Number:', asset.serialNumber);
+    console.log('Asset allocated to employee:', asset.allocatedTo);
+    console.log('Asset allocated to office:', asset.allocatedToOffice);
+    console.log('Asset status:', asset.status);
+    console.log('========================');
+    
     this.editingAsset = asset;
     
     this.assetForm.patchValue({
-      assetId: asset.assetId,
+      assetId: asset.assetId,  // This should be the asset ID like AID20250013
       serialNumber: asset.serialNumber,
       name: asset.name,
       type: asset.type,
       brand: asset.brand,
       model: asset.model,
       status: asset.status,
-      allocatedTo: asset.allocatedTo || '',
+      allocatedTo: asset.allocatedTo || '',  // This should be employee ID like K0021
       allocatedToOffice: asset.allocatedToOffice || '',
       vendor: asset.vendor,
       vendorEmail: asset.vendorEmail,
       vendorContact: asset.vendorContact,
-      warrantyExpiry: asset.warrantyExpiry ? asset.warrantyExpiry.split('T')[0] : '',
-      purchaseDate: asset.purchaseDate ? asset.purchaseDate.split('T')[0] : '',
-      purchaseCost: asset.purchaseCost
+      warrantyExpiry: asset.warrantyExpiry ? asset.warrantyExpiry.split('T')[0] : ''
     });
+    
+    console.log('Form values after patch:', this.assetForm.value);
+    console.log('editingAsset object stored:', this.editingAsset);
+    
+    // Load departments and employees if status is Allocated
+    if (asset.status === 'Allocated') {
+      this.loadDepartments();
+      this.assetForm.get('allocatedTo')?.enable();
+      this.assetForm.get('allocatedToOffice')?.enable();
+      
+      // If there's an allocated employee, find their department and load employees
+      if (asset.allocatedTo) {
+        this.http.get<any>('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/departments')
+          .subscribe({
+            next: (resp) => {
+              if (resp?.success && Array.isArray(resp.data)) {
+                this.departmentOptions = resp.data;
+              }
+            }
+          });
+      }
+    } else {
+      this.assetForm.get('allocatedTo')?.disable();
+      this.assetForm.get('allocatedToOffice')?.disable();
+    }
     
     this.filteredEmployees = [];
     this.showAssetModal = true;
@@ -1056,114 +1008,165 @@ openTicketAction(ticket: Ticket): void {
     this.allocationReason = '';
   }
 
-  onAssetSubmit(): void {
-    const formValue = this.assetForm.value;
-    const status = formValue.status;
+onAssetSubmit(): void {
+  console.log('=== SUBMIT ASSET DEBUG ===');
+  console.log('editingAsset object:', this.editingAsset);
+  console.log('Form values:', this.assetForm.value);
+  
+  // SAFETY CHECK: Ensure asset ID is correct
+  if (this.editingAsset) {
+    const formAssetId = this.assetForm.get('assetId')?.value;
+    const originalAssetId = this.editingAsset.assetId;
     
-    if ((status === 'Maintenance' || status === 'Retired') && !this.allocationReason?.trim()) {
-      alert('Please provide a reason for Maintenance or Retired status.');
-      return;
-    }
-
-    const formWithoutReason = { ...this.assetForm.controls };
+    console.log('Form asset ID:', formAssetId);
+    console.log('Original asset ID:', originalAssetId);
     
-    const mainFormValid = Object.keys(formWithoutReason).every(key => 
-      this.assetForm.get(key)?.valid || this.assetForm.get(key)?.disabled
-    );
-
-    if (mainFormValid) {
-      const apiPayload: any = {
-        asset_id: formValue.assetId || this.nextAssetId,
-        serial_number: formValue.serialNumber,
-        name: formValue.name,
-        type: formValue.type,
-        brand: formValue.brand,
-        model: formValue.model,
-        status: formValue.status,
-        allocated_to: formValue.allocatedTo || null,
-        allocated_to_office: formValue.allocatedToOffice || null,
-        vendor: formValue.vendor,
-        vendor_email: formValue.vendorEmail,
-        vendor_contact: formValue.vendorContact,
-        warranty_expiry: formValue.warrantyExpiry || null,
-        purchase_date: formValue.purchaseDate || null,
-        purchase_cost: formValue.purchaseCost || null
-      };
-
-      if ((status === 'Maintenance' || status === 'Retired') && this.allocationReason?.trim()) {
-        apiPayload.reason = this.allocationReason.trim();
-      }
+    if (formAssetId !== originalAssetId) {
+      console.error('🚨 ASSET ID MISMATCH DETECTED!');
+      console.error('Form shows:', formAssetId);
+      console.error('Should be:', originalAssetId);
       
-      Object.keys(apiPayload).forEach(key => {
-        if (apiPayload[key] === '') {
-          apiPayload[key] = null;
-        }
-      });
-      
-      if (this.editingAsset) {
-        this.http.put(`https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/assets/${this.editingAsset.assetId}`, apiPayload)
-          .subscribe({
-            next: (response: any) => {
-              if (response.success) {
-                this.loadAssets();
-                this.closeAddAssetModal();
-                alert('Asset updated successfully!');
-                
-                // Refresh activity logs to show the new entry
-                if (this.activeSection === 'logs') {
-                  setTimeout(() => {
-                    this.loadActivityLogs();
-                  }, 1000);
-                }
-              } else {
-                alert('Failed to update asset. Please try again.');
-              }
-            },
-            error: (error) => {
-              console.error('Error updating asset:', error);
-              alert('Error updating asset. Please try again.');
-            }
-          });
-      } else {
-        this.http.post('https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/assets', apiPayload)
-          .subscribe({
-            next: (response: any) => {
-              if (response.success) {
-                this.loadAssets();
-                this.closeAddAssetModal();
-                alert('Asset added successfully!');
-                this.nextAssetId = null;
-                this.allocationReason = '';
-                
-                // Refresh activity logs to show the new entry
-                if (this.activeSection === 'logs') {
-                  setTimeout(() => {
-                    this.loadActivityLogs();
-                  }, 1000);
-                }
-              } else {
-                alert(`Failed to add asset: ${response.message || 'Please try again.'}`);
-              }
-            },
-            error: (error) => {
-              console.error('Error creating asset:', error);
-              const errorMessage = error.error?.message || error.message || 'Unknown error occurred';
-              alert(`Error creating asset: ${errorMessage}`);
-            }
-          });
-      }
-    } else {
-      Object.keys(formWithoutReason).forEach(key => {
-        this.assetForm.get(key)?.markAsTouched();
-      });
-      
-      const invalidFields = Object.keys(formWithoutReason)
-        .filter(key => this.assetForm.get(key)?.invalid)
-        .join(', ');
-      
-      alert(`Please fill all required fields correctly. Invalid fields: ${invalidFields}`);
+      // Fix it automatically
+      this.assetForm.get('assetId')?.setValue(originalAssetId);
+      console.log('✅ Asset ID corrected from', formAssetId, 'to', originalAssetId);
+      alert(`Asset ID was corrupted (showed: ${formAssetId}), corrected to: ${originalAssetId}`);
     }
   }
+  
+  const formValue = this.assetForm.value;
+  const status = formValue.status;
+  
+  if ((status === 'Maintenance' || status === 'Retired') && !this.allocationReason?.trim()) {
+    alert('Please provide a reason for Maintenance or Retired status.');
+    return;
+  }
+
+  const formWithoutReason = { ...this.assetForm.controls };
+  
+  const mainFormValid = Object.keys(formWithoutReason).every(key => 
+    this.assetForm.get(key)?.valid || this.assetForm.get(key)?.disabled
+  );
+
+  if (mainFormValid) {
+    const apiPayload: any = {
+      serial_number: formValue.serialNumber,
+      name: formValue.name,
+      type: formValue.type,
+      brand: formValue.brand,
+      model: formValue.model,
+      status: formValue.status,
+      allocated_to: formValue.allocatedTo || null,
+      allocated_to_office: formValue.allocatedToOffice || null,
+      vendor: formValue.vendor,
+      vendor_email: formValue.vendorEmail,
+      vendor_contact: formValue.vendorContact,
+      warranty_expiry: formValue.warrantyExpiry || null
+    };
+
+    if ((status === 'Maintenance' || status === 'Retired') && this.allocationReason?.trim()) {
+      apiPayload.reason = this.allocationReason.trim();
+    }
+    
+    // Clean up empty strings
+    Object.keys(apiPayload).forEach(key => {
+      if (apiPayload[key] === '') {
+        apiPayload[key] = null;
+      }
+    });
+    
+    console.log('Submitting payload:', apiPayload);
+    
+    if (this.editingAsset) {
+      // Use the corrected asset ID from editingAsset (not from form)
+      const assetId = this.editingAsset.assetId;
+      console.log('Using asset ID from editingAsset:', assetId);
+      console.log('Asset ID type:', typeof assetId);
+      console.log('Asset ID length:', assetId?.length);
+      
+      // Additional debug - check relationship between asset ID and employee ID
+      console.log('editingAsset.allocatedTo (employee ID):', this.editingAsset.allocatedTo);
+      console.log('Form allocatedTo (employee ID):', formValue.allocatedTo);
+      console.log('Are we confusing asset ID with employee ID?', assetId === this.editingAsset.allocatedTo);
+      
+      if (!assetId) {
+        alert('Error: Asset ID not found in editingAsset object');
+        return;
+      }
+      
+      // Check if asset ID has wrong format
+      if (assetId && !assetId.startsWith('AID')) {
+        console.error('🚨 PROBLEM FOUND: Asset ID does not start with AID!');
+        console.error('Asset ID value:', assetId);
+        console.error('This looks like an employee ID instead of asset ID');
+        alert(`Error: Asset ID "${assetId}" has wrong format. Should start with AID.`);
+        return;
+      }
+      
+      const url = `https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/assets/${assetId}`;
+      console.log('Making PUT request to URL:', url);
+      
+      this.http.put(url, apiPayload).subscribe({
+        next: (response: any) => {
+          console.log('Update response:', response);
+          if (response.success) {
+            this.loadAssets();
+            this.closeAddAssetModal();
+            alert('Asset updated successfully!');
+            
+            if (this.activeSection === 'logs') {
+              setTimeout(() => {
+                this.loadActivityLogs();
+              }, 1000);
+            }
+          } else {
+            alert(`Failed to update asset: ${response.message}`);
+          }
+        },
+        error: (error) => {
+          console.error('Update error:', error);
+          const errorMessage = error.error?.message || error.message || 'Unknown error occurred';
+          alert(`Error updating asset: ${errorMessage}`);
+        }
+      });
+    } else {
+      // Create new asset logic remains the same
+      const url = 'https://hrmss-bvc3gvc6e9deexhq.centralus-01.azurewebsites.net/api/assets';
+      
+      this.http.post(url, apiPayload).subscribe({
+        next: (response: any) => {
+          if (response.success) {
+            this.loadAssets();
+            this.closeAddAssetModal();
+            alert('Asset added successfully!');
+            
+            if (this.activeSection === 'logs') {
+              setTimeout(() => {
+                this.loadActivityLogs();
+              }, 1000);
+            }
+          } else {
+            alert('Failed to add asset. Please try again.');
+          }
+        },
+        error: (error) => {
+          console.error('Error creating asset:', error);
+          const errorMessage = error.error?.message || error.message || 'Unknown error occurred';
+          alert(`Error creating asset: ${errorMessage}`);
+        }
+      });
+    }
+  } else {
+    Object.keys(formWithoutReason).forEach(key => {
+      this.assetForm.get(key)?.markAsTouched();
+    });
+    
+    const invalidFields = Object.keys(formWithoutReason)
+      .filter(key => this.assetForm.get(key)?.invalid)
+      .join(', ');
+    
+    alert(`Please fill all required fields correctly. Invalid fields: ${invalidFields}`);
+  }
+}
 
   deleteAsset(asset: Asset): void {
     if (confirm(`Are you sure you want to delete asset ${asset.serialNumber}?`)) {
@@ -1280,41 +1283,7 @@ openTicketAction(ticket: Ticket): void {
     }
   }
 
-  // ==================== ACTIVITY LOGS (LEGACY) ====================
-
-  get groupedActivityLogs_legacy() {
-    const grouped: { [key: string]: DateGroup } = {};
-    
-    this.activityLogs.forEach(log => {
-      const dateStr = log.timestamp.toDateString();
-      if (!grouped[dateStr]) {
-        grouped[dateStr] = {
-          date: log.timestamp,
-          userActivities: {}
-        };
-      }
-      
-      const userKey = `${log.user}-${log.device}-${log.issueType}`;
-      if (!grouped[dateStr].userActivities[userKey]) {
-        grouped[dateStr].userActivities[userKey] = {
-          userName: log.user,
-          userInitials: this.getInitials(log.user),
-          device: log.device,
-          issueType: log.issueType,
-          activities: []
-        };
-      }
-      
-      grouped[dateStr].userActivities[userKey].activities.push(log);
-    });
-    
-    return Object.keys(grouped).map(date => {
-      return {
-        date: grouped[date].date,
-        userActivities: Object.values(grouped[date].userActivities)
-      };
-    }).sort((a, b) => b.date.getTime() - a.date.getTime());
-  }
+  // ==================== HELPER FUNCTIONS ====================
 
   getInitials(name: string): string {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
