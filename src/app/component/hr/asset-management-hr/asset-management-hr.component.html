@@ -36,17 +36,22 @@
                 class="w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 transition">
           Ticket Management
         </button>
-        <button (click)="activeSection = 'logs'" 
-                [ngClass]="{ 'bg-indigo-100 text-indigo-700': activeSection==='logs' }"
+        <button (click)="activeSection = 'asset-logs'" 
+                [ngClass]="{ 'bg-indigo-100 text-indigo-700': activeSection==='asset-logs' }"
                 class="w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 transition">
-          Activity Logs
+          Asset Activity Logs
+        </button>
+        <button (click)="activeSection = 'ticket-logs'" 
+                [ngClass]="{ 'bg-indigo-100 text-indigo-700': activeSection==='ticket-logs' }"
+                class="w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 transition">
+          Ticket Activity Logs
         </button>
       </aside>
 
       <!-- Main Dynamic Section -->
       <main class="flex-1 p-6 overflow-auto">
         
-        <!-- Vendors -->
+        <!-- Vendors Section -->
         <section *ngIf="activeSection === 'vendors'" class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
           <div class="h-2 bg-indigo-600"></div>
           <div class="p-6">
@@ -124,7 +129,7 @@
           </div>
         </section>
 
-        <!-- All Assets -->
+        <!-- All Assets Section -->
         <section *ngIf="activeSection === 'assets'">
           <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 transition duration-300 hover:shadow-md">
             <div class="h-2 bg-indigo-600"></div>
@@ -237,19 +242,22 @@
                     </td>
                   </ng-container>
                   
-                  <!-- Allocated To Employee Column -->
+                  <!-- Allocated To Column -->
                   <ng-container matColumnDef="allocatedTo">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Allocated to Employee </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Allocated To </th>
                     <td mat-cell *matCellDef="let element">
-                      <span [matTooltip]="element.lastAllocationReason || ''">{{element.allocatedTo || '—'}}</span>
-                    </td>
-                  </ng-container>
-
-                  <!-- Allocated To Office Column -->
-                  <ng-container matColumnDef="allocatedToOffice">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Allocated to Office </th>
-                    <td mat-cell *matCellDef="let element">
-                      {{element.allocatedToOffice || '—'}}
+                      <div *ngIf="element.allocatedTo || element.allocatedToOffice">
+                        <div *ngIf="element.allocatedTo" class="font-medium">
+                          Employee: {{element.allocatedTo}}
+                        </div>
+                        <div *ngIf="element.allocatedToOffice && !element.allocatedTo" class="font-medium">
+                          Office: {{element.allocatedToOffice}}
+                        </div>
+                        <div *ngIf="element.location" class="text-xs text-gray-500">
+                          Location: {{element.location}}
+                        </div>
+                      </div>
+                      <span *ngIf="!element.allocatedTo && !element.allocatedToOffice">—</span>
                     </td>
                   </ng-container>
                   
@@ -274,9 +282,9 @@
                     <td mat-cell *matCellDef="let element"> {{element.warrantyExpiry | date}} </td>
                   </ng-container>
 
-                  <!-- Date Allocated Column -->
+                  <!-- Date Created Column -->
                   <ng-container matColumnDef="createdAt">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Date Allocated </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Date Created </th>
                     <td mat-cell *matCellDef="let element"> 
                       {{element.createdAt | date:'shortDate'}} 
                     </td>
@@ -538,8 +546,8 @@
           </div>
         </section>
 
-        <!-- Activity Logs Section -->
-        <section *ngIf="activeSection === 'logs'" class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+        <!-- Asset Activity Logs Section -->
+        <section *ngIf="activeSection === 'asset-logs'" class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
           <div class="h-2 bg-indigo-600"></div>
           <div class="p-6">
             <!-- Header -->
@@ -547,15 +555,15 @@
               <div class="flex items-center space-x-3">
                 <div class="bg-indigo-100 p-2 rounded-lg">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <h3 class="font-bold text-xl text-gray-800">Activity Logs</h3>
+                <h3 class="font-bold text-xl text-gray-800">Asset Activity Logs</h3>
               </div>
               
               <!-- Refresh Button -->
               <button 
-                (click)="loadActivityLogs()"
+                (click)="loadAssetActivityLogs()"
                 class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center space-x-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -572,8 +580,8 @@
                   <label class="block text-sm font-medium text-gray-700 mb-1">Employee Name</label>
                   <input 
                     type="text" 
-                    [(ngModel)]="activityLogFilters.employeeName"
-                    (ngModelChange)="onFilterChange()"
+                    [(ngModel)]="assetActivityFilters.employeeName"
+                    (ngModelChange)="onAssetActivityFilterChange()"
                     placeholder="Search by name..." 
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
@@ -583,8 +591,8 @@
                   <label class="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
                   <input 
                     type="text" 
-                    [(ngModel)]="activityLogFilters.employeeId"
-                    (ngModelChange)="onFilterChange()"
+                    [(ngModel)]="assetActivityFilters.employeeId"
+                    (ngModelChange)="onAssetActivityFilterChange()"
                     placeholder="Search by ID..." 
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
@@ -594,8 +602,8 @@
                   <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
                   <input 
                     type="date" 
-                    [(ngModel)]="activityLogFilters.startDate"
-                    (ngModelChange)="onFilterChange()"
+                    [(ngModel)]="assetActivityFilters.startDate"
+                    (ngModelChange)="onAssetActivityFilterChange()"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 
@@ -604,8 +612,8 @@
                   <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
                   <input 
                     type="date" 
-                    [(ngModel)]="activityLogFilters.endDate"
-                    (ngModelChange)="onFilterChange()"
+                    [(ngModel)]="assetActivityFilters.endDate"
+                    (ngModelChange)="onAssetActivityFilterChange()"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
               </div>
@@ -613,7 +621,7 @@
               <!-- Clear Filters Button -->
               <div class="mt-4 flex justify-end">
                 <button 
-                  (click)="clearFilters()"
+                  (click)="clearAssetActivityFilters()"
                   class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition">
                   Clear Filters
                 </button>
@@ -621,16 +629,16 @@
             </div>
 
             <!-- Loading Indicator -->
-            <div *ngIf="isLoadingActivityLogs" class="flex justify-center items-center py-8">
+            <div *ngIf="isLoadingAssetActivityLogs" class="flex justify-center items-center py-8">
               <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-              <span class="ml-2 text-gray-600">Loading activity logs...</span>
+              <span class="ml-2 text-gray-600">Loading asset activity logs...</span>
             </div>
 
-            <!-- Activity Logs Content -->
-            <div class="space-y-6" *ngIf="!isLoadingActivityLogs">
+            <!-- Asset Activity Logs Content -->
+            <div class="space-y-6" *ngIf="!isLoadingAssetActivityLogs">
               
               <!-- Grouped by Employee -->
-              <div *ngFor="let employeeGroup of groupedActivityLogs" class="border rounded-lg overflow-hidden">
+              <div *ngFor="let employeeGroup of groupedAssetActivityLogs" class="border rounded-lg overflow-hidden">
                 <!-- Employee Header -->
                 <div class="bg-gray-100 px-4 py-3">
                   <div class="flex items-center justify-between">
@@ -644,7 +652,7 @@
                       </div>
                     </div>
                     <div class="text-sm text-gray-500">
-                      {{ employeeGroup.activities.length }} activities
+                      {{ employeeGroup.activities.length }} asset activities
                     </div>
                   </div>
                 </div>
@@ -658,7 +666,7 @@
                         <div class="w-8 h-8 rounded-full flex items-center justify-center" 
                              [ngClass]="getActionTypeColorClass(activity.action_type)">
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
                           </svg>
                         </div>
                       </div>
@@ -681,31 +689,11 @@
                         
                         <p class="mt-1 text-sm text-gray-700">{{ activity.action_description }}</p>
                         
-                        <!-- Additional Details -->
-                        <div class="mt-2 flex flex-wrap gap-2" *ngIf="activity.asset_id || activity.ticket_id">
-                          <span *ngIf="activity.asset_id" class="inline-flex items-center px-2 py-1 rounded-md text-xs bg-blue-50 text-blue-700">
+                        <!-- Asset Details -->
+                        <div class="mt-2 flex flex-wrap gap-2" *ngIf="activity.asset_id">
+                          <span class="inline-flex items-center px-2 py-1 rounded-md text-xs bg-blue-50 text-blue-700">
                             Asset: {{ activity.asset_id }}
                           </span>
-                          <span *ngIf="activity.ticket_id" class="inline-flex items-center px-2 py-1 rounded-md text-xs bg-purple-50 text-purple-700">
-                            Ticket: {{ activity.ticket_id }}
-                          </span>
-                        </div>
-                        
-                        <!-- Additional Data (if exists) -->
-                        <div *ngIf="activity.additional_data" class="mt-2">
-                          <button 
-                            (click)="toggleAdditionalData(activity.id)"
-                            class="text-xs text-indigo-600 hover:text-indigo-800 flex items-center space-x-1">
-                            <span>{{ expandedActivityIds.has(activity.id) ? 'Hide' : 'Show' }} Details</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    [attr.d]="expandedActivityIds.has(activity.id) ? 'M19 9l-7 7-7-7' : 'M9 5l7 7-7 7'" />
-                            </svg>
-                          </button>
-                          
-                          <div *ngIf="expandedActivityIds.has(activity.id)" class="mt-2 p-2 bg-gray-50 rounded text-xs">
-                            <pre class="whitespace-pre-wrap text-gray-600">{{ formatAdditionalData(activity.additional_data) }}</pre>
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -714,30 +702,221 @@
               </div>
               
               <!-- No Data State -->
-              <div *ngIf="groupedActivityLogs.length === 0" class="text-center py-12">
+              <div *ngIf="groupedAssetActivityLogs.length === 0" class="text-center py-12">
                 <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">No activity logs found</h3>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No asset activity logs found</h3>
                 <p class="mt-1 text-sm text-gray-500">Try adjusting your filters to see more results.</p>
               </div>
             </div>
 
             <!-- Pagination -->
-            <div *ngIf="!isLoadingActivityLogs && groupedActivityLogs.length > 0" class="mt-6 flex items-center justify-between">
+            <div *ngIf="!isLoadingAssetActivityLogs && groupedAssetActivityLogs.length > 0" class="mt-6 flex items-center justify-between">
               <div class="text-sm text-gray-700">
-                Showing page {{ currentActivityPage }} of {{ totalActivityPages }}
+                Showing page {{ currentAssetActivityPage }} of {{ totalAssetActivityPages }}
               </div>
               <div class="flex space-x-2">
                 <button 
-                  (click)="loadPreviousActivityPage()"
-                  [disabled]="currentActivityPage <= 1"
+                  (click)="loadPreviousAssetActivityPage()"
+                  [disabled]="currentAssetActivityPage <= 1"
                   class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                   Previous
                 </button>
                 <button 
-                  (click)="loadNextActivityPage()"
-                  [disabled]="currentActivityPage >= totalActivityPages"
+                  (click)="loadNextAssetActivityPage()"
+                  [disabled]="currentAssetActivityPage >= totalAssetActivityPages"
+                  class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Ticket Activity Logs Section -->
+        <section *ngIf="activeSection === 'ticket-logs'" class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+          <div class="h-2 bg-indigo-600"></div>
+          <div class="p-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center space-x-3">
+                <div class="bg-indigo-100 p-2 rounded-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 class="font-bold text-xl text-gray-800">Ticket Activity Logs</h3>
+              </div>
+              
+              <!-- Refresh Button -->
+              <button 
+                (click)="loadTicketActivityLogs()"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Refresh</span>
+              </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="mb-6 bg-gray-50 p-4 rounded-lg">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Employee Name Filter -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Employee Name</label>
+                  <input 
+                    type="text" 
+                    [(ngModel)]="ticketActivityFilters.employeeName"
+                    (ngModelChange)="onTicketActivityFilterChange()"
+                    placeholder="Search by name..." 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                
+                <!-- Employee ID Filter -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
+                  <input 
+                    type="text" 
+                    [(ngModel)]="ticketActivityFilters.employeeId"
+                    (ngModelChange)="onTicketActivityFilterChange()"
+                    placeholder="Search by ID..." 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                
+                <!-- Start Date Filter -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                  <input 
+                    type="date" 
+                    [(ngModel)]="ticketActivityFilters.startDate"
+                    (ngModelChange)="onTicketActivityFilterChange()"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                
+                <!-- End Date Filter -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                  <input 
+                    type="date" 
+                    [(ngModel)]="ticketActivityFilters.endDate"
+                    (ngModelChange)="onTicketActivityFilterChange()"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+              </div>
+              
+              <!-- Clear Filters Button -->
+              <div class="mt-4 flex justify-end">
+                <button 
+                  (click)="clearTicketActivityFilters()"
+                  class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition">
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div *ngIf="isLoadingTicketActivityLogs" class="flex justify-center items-center py-8">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              <span class="ml-2 text-gray-600">Loading ticket activity logs...</span>
+            </div>
+
+            <!-- Ticket Activity Logs Content -->
+            <div class="space-y-6" *ngIf="!isLoadingTicketActivityLogs">
+              
+              <!-- Grouped by Employee -->
+              <div *ngFor="let employeeGroup of groupedTicketActivityLogs" class="border rounded-lg overflow-hidden">
+                <!-- Employee Header -->
+                <div class="bg-gray-100 px-4 py-3">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold">
+                        {{ getEmployeeInitials(employeeGroup.employee_name) }}
+                      </div>
+                      <div>
+                        <div class="font-semibold text-gray-800">{{ employeeGroup.employee_name || 'Unknown Employee' }}</div>
+                        <div class="text-sm text-gray-600">ID: {{ employeeGroup.employee_id || 'N/A' }} | Email: {{ employeeGroup.employee_email || 'N/A' }}</div>
+                      </div>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      {{ employeeGroup.activities.length }} ticket activities
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Activities for this Employee -->
+                <div class="divide-y divide-gray-100">
+                  <div *ngFor="let activity of employeeGroup.activities" class="p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-start space-x-4">
+                      <!-- Activity Icon -->
+                      <div class="mt-1">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center" 
+                             [ngClass]="getActionTypeColorClass(activity.action_type)">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                      </div>
+                      
+                      <!-- Activity Content -->
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center space-x-2">
+                            <span class="text-sm font-medium text-gray-900">{{ activity.performed_by_name || activity.performed_by }}</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                                  [ngClass]="{
+                                    'bg-indigo-100 text-indigo-800': activity.performed_by === 'HR',
+                                    'bg-green-100 text-green-800': activity.performed_by !== 'HR'
+                                  }">
+                              {{ activity.performed_by === 'HR' ? 'HR' : 'Employee' }}
+                            </span>
+                          </div>
+                          <span class="text-xs text-gray-500">{{ activity.created_at | date:'medium' }}</span>
+                        </div>
+                        
+                        <p class="mt-1 text-sm text-gray-700">{{ activity.action_description }}</p>
+                        
+                        <!-- Ticket Details -->
+                        <div class="mt-2 flex flex-wrap gap-2" *ngIf="activity.ticket_id">
+                          <span class="inline-flex items-center px-2 py-1 rounded-md text-xs bg-purple-50 text-purple-700">
+                            Ticket: {{ activity.ticket_id }}
+                          </span>
+                          <span *ngIf="activity.asset_id" class="inline-flex items-center px-2 py-1 rounded-md text-xs bg-blue-50 text-blue-700">
+                            Asset: {{ activity.asset_id }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- No Data State -->
+              <div *ngIf="groupedTicketActivityLogs.length === 0" class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No ticket activity logs found</h3>
+                <p class="mt-1 text-sm text-gray-500">Try adjusting your filters to see more results.</p>
+              </div>
+            </div>
+
+            <!-- Pagination -->
+            <div *ngIf="!isLoadingTicketActivityLogs && groupedTicketActivityLogs.length > 0" class="mt-6 flex items-center justify-between">
+              <div class="text-sm text-gray-700">
+                Showing page {{ currentTicketActivityPage }} of {{ totalTicketActivityPages }}
+              </div>
+              <div class="flex space-x-2">
+                <button 
+                  (click)="loadPreviousTicketActivityPage()"
+                  [disabled]="currentTicketActivityPage <= 1"
+                  class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Previous
+                </button>
+                <button 
+                  (click)="loadNextTicketActivityPage()"
+                  [disabled]="currentTicketActivityPage >= totalTicketActivityPages"
                   class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                   Next
                 </button>
@@ -884,52 +1063,66 @@
             </select>
           </div>
           
-          <!-- Allocate to Office (Only for Allocated status) -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Allocate to Office</label>
-            <select formControlName="allocatedToOffice" 
-                    [disabled]="assetForm.get('status')?.value !== 'Allocated'"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed">
-              <option value="">Select Office Allocation</option>
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
+          <!-- Allocate To Section (Only for Allocated status) -->
+          <div *ngIf="assetForm.get('status')?.value === 'Allocated'">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Allocate To</label>
+            <select formControlName="allocateTo" 
+                    (change)="onAllocateToChange($event)"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="">Select Allocation Type</option>
+              <option value="office">Office</option>
+              <option value="employee">Employee</option>
             </select>
           </div>
           
-          <!-- Allocate to Employee (Only for Allocated status) -->
-          <div class="md:col-span-2" *ngIf="assetForm.get('status')?.value === 'Allocated'">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Allocate to Employee</label>
+          <!-- Location Dropdown (Only for Office allocation) -->
+          <div *ngIf="assetForm.get('status')?.value === 'Allocated' && assetForm.get('allocateTo')?.value === 'office'">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Select Location</label>
+            <select formControlName="location" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="">Select Location</option>
+              <option value="1st Floor">1st Floor</option>
+              <option value="2nd Floor">2nd Floor</option>
+              <option value="3rd Floor">3rd Floor</option>
+            </select>
+          </div>
+          
+          <!-- Department and Employee Dropdowns (Only for Employee allocation) -->
+          <div class="md:col-span-2" *ngIf="assetForm.get('status')?.value === 'Allocated' && assetForm.get('allocateTo')?.value === 'employee'">
             <div class="grid grid-cols-2 gap-4">
               <!-- Department Dropdown -->
-              <select (change)="onDepartmentChange($event)" 
-                      [disabled]="assetForm.get('status')?.value !== 'Allocated'"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed">
-                <option value="">Select Department</option>
-                <option *ngFor="let dept of departmentOptions" [value]="dept.grp_id">
-                  {{ getDepartmentName(dept.grp_id) }}
-                </option>
-              </select>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                <select (change)="onDepartmentChange($event)" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <option value="">Select Department</option>
+                  <option *ngFor="let dept of departmentOptions" [value]="dept.grp_id">
+                    {{ getDepartmentName(dept.grp_id) }}
+                  </option>
+                </select>
+              </div>
               
               <!-- Employee Dropdown -->
-           <!-- Employee Dropdown -->
-<select formControlName="allocatedTo" 
-        (change)="onEmployeeChange($event)"
-        [disabled]="assetForm.get('status')?.value !== 'Allocated'"
-        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed">
-  <option value="">Select Employee</option>
-  <option *ngFor="let emp of filteredEmployees" [value]="emp.employee_id">
-    {{ emp.name }} ({{ emp.employee_id }})
-  </option>
-</select>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Employee</label>
+                <select formControlName="allocatedTo" 
+                        (change)="onEmployeeChange($event)"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <option value="">Select Employee</option>
+                  <option *ngFor="let emp of filteredEmployees" [value]="emp.employee_id">
+                    {{ emp.name }} ({{ emp.employee_id }})
+                  </option>
+                </select>
+              </div>
             </div>
-            
-            <!-- Reason for Maintenance/Retired -->
-            <div class="mt-4" *ngIf="assetForm.get('status')?.value === 'Maintenance' || assetForm.get('status')?.value === 'Retired'">
-              <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
-              <textarea rows="2" [(ngModel)]="allocationReason" [ngModelOptions]="{standalone: true}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        placeholder="Enter reason for maintenance or retirement"></textarea>
-            </div>
+          </div>
+          
+          <!-- Reason for Maintenance/Retired -->
+          <div class="md:col-span-2" *ngIf="assetForm.get('status')?.value === 'Maintenance' || assetForm.get('status')?.value === 'Retired'">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+            <textarea rows="2" formControlName="reason"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      placeholder="Enter reason for maintenance or retirement"></textarea>
           </div>
           
           <div>
@@ -962,7 +1155,6 @@
     </div>
   </div>
 </div>
-
 
 <!-- Ticket Action Modal -->
 <div *ngIf="selectedTicket" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -1048,18 +1240,9 @@
         </div>
       </div>
       
-      <!-- Request More Information -->
-      <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Request More Information</label>
-        <textarea rows="3" 
-                  [(ngModel)]="informationRequest" 
-                  placeholder="Ask the employee for more details about the issue..."
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-      </div>
-      
       <!-- HR Response Section -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Your Response / Action Taken</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Your Response / Request More Info</label>
         <textarea rows="4" 
                   [(ngModel)]="ticketResponse" 
                   placeholder="Describe the action taken or provide guidance to the employee..."
